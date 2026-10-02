@@ -1,8 +1,8 @@
 {
-  "version": "0.250.0",
-  "buildId": "v250-futureproof-1",
+  "version": "0.252.0",
+  "buildId": "v252-binder-artwork-modular-1",
   "saveSchemaVersion": 1,
   "assetSchemaVersion": 1,
   "compatibilityRuntime": "V245-compatible",
-  "generatedAt": "2026-10-02T15:15:00+09:30"
+  "binderArchitecture": "V252 modular renderer + local-first artwork cache"
 }

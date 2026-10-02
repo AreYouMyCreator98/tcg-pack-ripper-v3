@@ -1,9 +1,9 @@
-import { criticalRuntime, secondaryRuntime } from '../config/runtime-manifest.js';
+import { criticalRuntime, binderRuntime, secondaryRuntime } from '../config/runtime-manifest.js';
 import { APP_CONFIG } from '../config/app-config.js';
 import { withTimeout } from '../utils/async.js';
 
 const loaded = new Map();
-let secondaryPromise = null;
+const groupPromises = new Map();
 
 function runtimeUrl(path, attempt = 0) {
   const url = new URL(path, document.baseURI);
@@ -32,11 +32,7 @@ async function loadWithRetry(path, timeoutMs) {
   let lastError;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      return await withTimeout(
-        injectClassicScript(path, attempt),
-        timeoutMs,
-        `runtime ${path}`
-      );
+      return await withTimeout(injectClassicScript(path, attempt), timeoutMs, `runtime ${path}`);
     } catch (error) {
       lastError = error;
       if (attempt === 0) await new Promise(resolve => setTimeout(resolve, 180));
@@ -48,7 +44,7 @@ async function loadWithRetry(path, timeoutMs) {
 export function loadClassicScript(path, timeoutMs = 20000) {
   if (loaded.has(path)) return loaded.get(path);
   const promise = loadWithRetry(path, timeoutMs).catch(error => {
-    loaded.delete(path); // A later user action can retry a failed chunk.
+    loaded.delete(path);
     throw error;
   });
   loaded.set(path, promise);
@@ -68,32 +64,40 @@ async function loadSequence(paths, timeoutMs, group) {
   }
 }
 
+function loadGroup(name, paths, timeoutMs) {
+  if (!groupPromises.has(name)) {
+    const promise = loadSequence(paths, timeoutMs, name)
+      .then(() => {
+        window.dispatchEvent(new CustomEvent(`tcg:${name}-ready`));
+        return true;
+      })
+      .catch(error => {
+        groupPromises.delete(name);
+        window.dispatchEvent(new CustomEvent(`tcg:${name}-failed`, {
+          detail: { message: String(error?.message || error) }
+        }));
+        throw error;
+      });
+    groupPromises.set(name, promise);
+  }
+  return groupPromises.get(name);
+}
+
 export async function loadCriticalRuntime() {
   await loadSequence(criticalRuntime, 20000, 'critical');
   window.dispatchEvent(new CustomEvent('tcg:critical-ready'));
 }
 
+export function loadBinderRuntime() {
+  return loadGroup('binder-runtime', binderRuntime, 12000);
+}
+
 export function loadSecondaryRuntime() {
-  if (!secondaryPromise) {
-    secondaryPromise = loadSequence(secondaryRuntime, 25000, 'secondary')
-      .then(() => {
-        window.dispatchEvent(new CustomEvent('tcg:secondary-ready'));
-        return true;
-      })
-      .catch(err => {
-        console.error('[TCG] Secondary runtime failed', err);
-        window.dispatchEvent(new CustomEvent('tcg:secondary-failed', {
-          detail: { message: String(err?.message || err) }
-        }));
-        secondaryPromise = null;
-        throw err;
-      });
-  }
-  return secondaryPromise;
+  return loadGroup('secondary', secondaryRuntime, 25000);
 }
 
 export function scheduleSecondaryRuntime() {
-  const run = () => loadSecondaryRuntime().catch(() => {});
+  const run = () => loadSecondaryRuntime().catch(error => console.error('[TCG] Secondary runtime failed', error));
   if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 1800 });
   else setTimeout(run, 650);
 }

@@ -8,6 +8,7 @@ import { registerPWA } from './pwa/register.js';
 import { installImagePolicy } from './platform/image-policy.js';
 import { installScreenTransitions } from './animations/screen-transitions.js';
 import { installBinderModule } from './systems/binder.js';
+import { installRankFrameRenderer } from './systems/rank-frame-renderer.js';
 import { APP_CONFIG, exposeAppConfig } from './config/app-config.js';
 
 exposeAppConfig();
@@ -66,6 +67,7 @@ async function boot() {
     installImagePolicy(document);
     installScreenTransitions(document);
     installBinderModule();
+    installRankFrameRenderer();
 
     bootStage = 'starting critical game systems';
     setStatus('Starting game systems…');

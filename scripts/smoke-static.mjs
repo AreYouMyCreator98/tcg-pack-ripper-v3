@@ -24,10 +24,13 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}/`;
 const checks = [
-  '', 'src/main.js', 'src/config/app-config.js', 'src/app/runtime-loader.js', 'src/app/health-check.js', 'src/artwork/index.js', 'src/systems/binder.js',
-  'runtime/core.js', 'runtime/progression.js', 'runtime/special-collection.js', 'runtime/packs.js',
-  'runtime/multiplayer.js', 'runtime/rank-frames.js', 'runtime/ranked.js', 'runtime/artwork.js',
-  'styles/core.css', 'ui/chrome.html', 'ui/screens/rip.html', 'ui/screens/binder.html',
+  '', 'src/main.js', 'src/config/app-config.js', 'src/app/runtime-loader.js', 'src/app/health-check.js',
+  'src/artwork/index.js', 'src/artwork/artwork-cache.js', 'src/artwork/artwork-db.js', 'src/artwork/artwork-resolver.js', 'src/artwork/artwork-queue.js', 'src/artwork/card-identity.js',
+  'src/screens/binder/index.js', 'src/screens/binder/binder-renderer.js', 'src/screens/binder/binder-inspector.js', 'src/screens/binder/binder-model.js', 'src/screens/binder/binder-status.js', 'src/screens/binder/binder-bridge.js',
+  'src/systems/binder.js', 'src/systems/rank-frame-renderer.js',
+  'runtime/core.js', 'runtime/progression.js', 'runtime/special-collection.js', 'runtime/packs.js', 'runtime/binder-bridge.js',
+  'runtime/multiplayer.js', 'runtime/rank-frames.js', 'runtime/ranked.js',
+  'styles/core.css', 'styles/binder.css', 'ui/chrome.html', 'ui/screens/rip.html', 'ui/screens/binder.html',
   'assets/manifest.json', 'manifest.webmanifest', 'sw.js'
 ];
 try {

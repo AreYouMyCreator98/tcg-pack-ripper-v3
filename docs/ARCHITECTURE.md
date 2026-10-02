@@ -17,3 +17,9 @@ Rank frames and Special Collection artwork are now normal WebP files under `asse
 
 ## PWA
 `sw.js` caches local assets only. Supabase/API requests are deliberately excluded so cloud save and multiplayer data are never served stale by the service worker.
+
+## V252 Binder boundary
+
+Binder UI and card artwork no longer depend on `public/runtime/artwork.js`. The only classic-script Binder dependency is `public/runtime/binder-bridge.js`, which exposes narrow hooks into the existing save/economy/grading globals. Everything else is maintained as ES modules under `src/screens/binder/` and `src/artwork/`.
+
+Artwork is view/cache data only. Cache failures must never delete cards, decrement quantities, or alter ownership. Low-resolution fronts are cached persistently in IndexedDB; high-resolution images are requested only for inspection. Existing V239 cache keys are intentionally retained for player cache continuity.

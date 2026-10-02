@@ -1,5 +1,7 @@
-import { loadSecondaryRuntime } from '../app/runtime-loader.js';
-import { prepareBinderArtwork, retryMissingArtwork, artworkStatus } from '../artwork/index.js';
+import { loadBinderRuntime } from '../app/runtime-loader.js';
+import { activateBinderScreen, binderScreenReady } from '../screens/binder/index.js';
+import { artworkStatus, artworkRepairReport, repairFailedArtwork } from '../artwork/index.js';
+import { currentBinderCards } from '../screens/binder/binder-renderer.js';
 
 let installed = false;
 let warmPromise = null;
@@ -10,56 +12,63 @@ function binderIsActive() {
 
 function warmBinderRuntime() {
   if (!warmPromise) {
-    warmPromise = loadSecondaryRuntime().catch(error => {
-      warmPromise = null;
-      throw error;
-    });
+    warmPromise = loadBinderRuntime()
+      .then(() => activateBinderScreen())
+      .catch(error => {
+        warmPromise = null;
+        throw error;
+      });
   }
   return warmPromise;
-}
-
-async function prepareIfActive(show = true) {
-  if (!binderIsActive()) return null;
-  const result = await prepareBinderArtwork({ show });
-  // Artwork runtime replaces renderBinder with its cache-aware renderer.
-  try { window.renderBinder?.(false); } catch (_) {}
-  return result;
 }
 
 export function installBinderModule() {
   if (installed) return;
   installed = true;
 
-  const navButton = document.querySelector('.nav [data-s="binder"]');
-  navButton?.addEventListener('pointerdown', () => {
-    warmBinderRuntime().catch(() => {});
-  }, { passive: true });
+  // Core's legacy renderer references this symbol on image errors. Keep a safe
+  // no-op immediately, then replace it with the V252 implementation when ready.
+  window.repairBinderImage = window.repairBinderImage || (() => false);
 
+  const navButton = document.querySelector('.nav [data-s="binder"]');
+  navButton?.addEventListener('pointerdown', () => warmBinderRuntime().catch(() => {}), { passive: true });
   navButton?.addEventListener('click', () => {
-    // Let the legacy navigation switch screens first, then upgrade Binder.
     setTimeout(() => {
       warmBinderRuntime()
-        .then(() => prepareIfActive(true))
+        .then(() => {
+          if (binderIsActive()) window.renderBinder?.(false);
+        })
         .catch(error => console.error('[TCG] Binder module failed', error));
     }, 0);
   });
 
-  window.addEventListener('tcg:secondary-ready', () => {
-    if (binderIsActive()) prepareIfActive(true).catch(() => {});
-  });
+  // The bridge is tiny. Warm it after critical boot so Binder is normally fully
+  // modular before the player's first tap, without delaying Rip Packs startup.
+  window.addEventListener('tcg:app-ready', () => {
+    const run = () => warmBinderRuntime().catch(() => {});
+    if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 2400 });
+    else setTimeout(run, 700);
+  }, { once: true });
 }
 
 export async function openBinder() {
   await warmBinderRuntime();
   document.querySelector('.nav [data-s="binder"]')?.click();
-  return prepareIfActive(true);
+  window.renderBinder?.(false);
+  return true;
 }
 
 export async function repairBinderArtwork() {
   await warmBinderRuntime();
-  return retryMissingArtwork({ show: true });
+  return repairFailedArtwork(currentBinderCards());
 }
 
 export function getBinderArtworkStatus() {
   return artworkStatus();
 }
+
+export function getBinderArtworkReport() {
+  return artworkRepairReport();
+}
+
+export { binderScreenReady };

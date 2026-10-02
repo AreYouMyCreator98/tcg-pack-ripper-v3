@@ -1,38 +1,30 @@
-# TCG Pack Ripper+ — modular/future-proof build
+# TCG Pack Ripper+ — V252
 
-Version **0.250.0**.
+The playable game is now maintained as a modular Vite/static-Pages project while preserving compatibility with existing player saves and the current Supabase backend.
 
-This repository keeps the proven V245-compatible game runtime playable while providing the structure needed to develop it safely as a real web app.
+## V252 focus
+Binder and card artwork are now real source modules rather than another compatibility patch inside the legacy artwork runtime. `runtime/artwork.js` remains in the repository only as rollback/reference history and is not loaded by the game.
 
-## Quick start
+### Binder architecture
+- `src/screens/binder/` — renderer, inspector, model, status and bridge adapter.
+- `src/artwork/` — card identity, IndexedDB cache, resolver, priority queue and high-level cache service.
+- `public/runtime/binder-bridge.js` — the only Binder-specific bridge into legacy state/economy/grading globals.
 
+The Binder opens from local game state immediately. Visible art is highest priority, neighboring pages prefetch next, and the rest of the collection caches during idle time.
+
+## Development
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite.
-
-## Production validation
-
+## Validation
 ```bash
-npm run release:check
+npm run test
+npm run validate
 ```
 
-## Important folders
+## Production
+GitHub Actions builds Vite `dist/` and deploys it to GitHub Pages. `npm run deploy:static` also creates a directly servable static build for diagnostics.
 
-- `src/` — all new development
-- `public/runtime/` — compatibility runtime inherited from the single-file game
-- `public/assets/` — real cacheable image/audio assets
-- `supabase/` — backend migration/function home
-- `tests/` — automated regression/integrity tests
-- `scripts/` — build/asset/release tooling
-- `docs/` — architecture and release notes
-- `legacy/` — rollback reference only
-
-The production account/save backend remains Supabase and existing player progress is intentionally preserved.
-
-## V251 hardening
-
-V251 adds retryable modular loading, a Binder/artwork facade, runtime health checks, and expanded automated contract tests while preserving the existing save schema and gameplay rules. See `docs/POST_MIGRATION_TEST_REPORT.md`.
-
+Existing save schema: **1**. V252 does not migrate or reset existing player data.
