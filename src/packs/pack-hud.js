@@ -28,6 +28,25 @@ export function installPackHUD({ onToggleFast, onRevealAll, onResetSession } = {
   el('v253FastToggle')?.addEventListener('click', () => onToggleFast?.());
   el('v253RevealAll')?.addEventListener('click', () => onRevealAll?.());
 
+  function syncHudVisibility() {
+    const summaryOpen = !!el('v88Summary');
+    const extractOpen = !!document.getElementById('v128Extract')?.classList.contains('on');
+    const stageBusy = stage.classList.contains('cardModeV89')
+      || stage.classList.contains('v91Cinematic')
+      || stage.classList.contains('v114TenRipping');
+    const hidden = summaryOpen || extractOpen || stageBusy || !rip.classList.contains('active');
+    hud.classList.toggle('v253HudHidden', hidden);
+  }
+
+  const stageObserver = new MutationObserver(syncHudVisibility);
+  stageObserver.observe(stage, { attributes: true, attributeFilter: ['class'], childList: true });
+  const bodyObserver = new MutationObserver(syncHudVisibility);
+  bodyObserver.observe(document.body, { childList: true });
+  window.addEventListener('tcg:card-reveal-start', syncHudVisibility);
+  window.addEventListener('tcg:pack-summary', syncHudVisibility);
+  window.addEventListener('tcg:app-ready', syncHudVisibility);
+  syncHudVisibility();
+
   function update(snapshot, fast = false) {
     const s = snapshot?.session || {};
     const p = snapshot?.persistent || {};
@@ -55,5 +74,5 @@ export function installPackHUD({ onToggleFast, onRevealAll, onResetSession } = {
 
   function hideRevealAll() { el('v253TenTools')?.classList.remove('show'); }
 
-  return Object.freeze({ update, showRevealAll, hideRevealAll, setRevealAllText, reset: () => onResetSession?.() });
+  return Object.freeze({ update, showRevealAll, hideRevealAll, setRevealAllText, syncVisibility: syncHudVisibility, reset: () => onResetSession?.() });
 }

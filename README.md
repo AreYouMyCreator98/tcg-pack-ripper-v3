@@ -1,6 +1,12 @@
-# TCG Pack Ripper+ — V253.1
+# TCG Pack Ripper+ — V253.2
 
 The playable game is maintained as a modular Vite/static-Pages project while preserving compatibility with existing player saves and the current Supabase backend.
+
+## V253.2 mobile polish
+- Combines FAST, SESSION, SIR+ and GOD into one opaque-glass collector pill positioned directly above the 1 PACK / 10 PACK selector.
+- Hides the collector pill automatically during extraction, live card reveals and the completed-pack summary so it never overlays card art.
+- Reorders the completed-pack experience to begin with the card fan at the very top, followed by recap stats and then the Open Another Pack CTA lower in the scroll.
+- Adds explicit extraction-layer compositor ordering so Android Chrome keeps pulled cards behind the pack wrapper until they clear the opening.
 
 ## V253 focus — Pack Engine + Reveal 2.0
 V253 puts pack-session orchestration, reveal profiles, recap UI, streak tracking and 10-pack quality-of-life features into real ES modules. The proven V252 probability generator remains the source of truth behind a tiny compatibility bridge, so this update does **not** rebalance pull rates.

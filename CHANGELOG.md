@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.253.2
+- Rebuilt the FAST / SESSION / SIR+ / GOD controls as one opaque-glass collector pill above the 1 PACK / 10 PACK selector.
+- Collector pill now hides automatically during pack extraction, live card reveals and completed-pack summary so it never overlays cards.
+- Pack-complete screen now starts with the card fan at the top, then recap statistics, with Open Another Pack lower in the natural scroll.
+- Added explicit extraction stacking/compositor order to stop Android Chrome briefly drawing pulled cards over the pack wrapper.
+- Pull rates, rewards, routing, economy and save schema remain unchanged.
+
 ## 0.253.1
 - Fixed session value reconciliation so completed openings use resolved market values instead of generation-time $0.10 fallbacks.
 - Moved the V253 live HUD out from behind the mobile set shelf and anchored FAST / SESSION / SIR+ below the clock row.

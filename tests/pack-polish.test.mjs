@@ -32,3 +32,28 @@ test('mobile summary hides duplicate legacy stats and demotes reset action', () 
   assert.match(css, /#rip #v88Summary\.v253SummaryActive \.v253ResetSession/);
   assert.match(css, /body:has\(#rip #v88Summary\.v253SummaryActive\) \.nav\{opacity:0!important/);
 });
+
+
+test('V253.2 collector HUD is one bottom glass pill and hides during card activity', () => {
+  assert.match(hud, /function syncHudVisibility\(\)/);
+  assert.match(hud, /stage\.classList\.contains\('cardModeV89'\)/);
+  assert.match(hud, /hud\.classList\.toggle\('v253HudHidden', hidden\)/);
+  assert.match(css, /#rip\.active #v253PackHUD\{[\s\S]*bottom:max\(142px/);
+  assert.match(css, /grid-template-columns:auto repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(css, /background:rgba\(255,255,255,.88\)/);
+  assert.match(css, /#rip\.active #v253PackHUD\.v253HudHidden/);
+});
+
+test('V253.2 completed opening starts with card fan and scrolls to Open Another', () => {
+  assert.match(summary, /wrap\.scrollTop = 0/);
+  assert.match(css, /#rip #v88Summary\.v253SummaryActive \.v88Fan\{[\s\S]*order:0!important/);
+  assert.match(css, /#rip #v88Summary\.v253SummaryActive \.v253Recap\{[\s\S]*order:1!important/);
+  assert.match(css, /#rip #v88Summary\.v253SummaryActive #v117OpenAnother\{[\s\S]*order:2!important/);
+});
+
+test('Android extraction compositor keeps pulled cards behind the pack wrapper', () => {
+  assert.match(css, /#v128Extract\{[\s\S]*isolation:isolate!important/);
+  assert.match(css, /#v128Extract \.v128Wrapper\{[\s\S]*z-index:30!important/);
+  assert.match(css, /#v128Extract \.v128Cards\{[\s\S]*z-index:20!important/);
+  assert.match(css, /html\[data-platform="android"\] #v128Extract \.v128Wrapper/);
+});

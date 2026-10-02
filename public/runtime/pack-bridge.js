@@ -128,10 +128,10 @@
   }
 
   window.TCG_PACK_LEGACY=Object.freeze({
-    version:'0.253.1',snapshot,currentCard:()=>cloneCard(pulls?.[idx]),cards:()=>cloneCards(pulls),
+    version:'0.253.2',snapshot,currentCard:()=>cloneCard(pulls?.[idx]),cards:()=>cloneCards(pulls),
     tier:cardTier,route:routeOf,collectRemaining,readPersistentStats,writePersistentStats,
     begin:()=>{try{return beginRip()}catch(error){return Promise.reject(error)}},
     selectedSet,mode:()=>Number(v114PackCount)===10?10:1
   });
-  emit('tcg:pack-bridge-ready',{version:'0.253.1'});
+  emit('tcg:pack-bridge-ready',{version:'0.253.2'});
 }catch(error){console.error('[TCG] V253 pack bridge failed',error)}})();

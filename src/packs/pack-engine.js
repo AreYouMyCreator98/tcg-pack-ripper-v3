@@ -75,7 +75,7 @@ export function installPackEngine(target = window) {
   target.addEventListener('tcg:fast-reveal-changed', () => hud?.update(session.snapshot(), reveal.isFast()));
 
   const api = Object.freeze({
-    version: '0.253.1',
+    version: '0.253.2',
     snapshot: () => bridge.snapshot(),
     session: () => session.snapshot(),
     resetSession,

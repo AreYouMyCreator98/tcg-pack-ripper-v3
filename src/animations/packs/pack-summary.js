@@ -43,4 +43,9 @@ export function renderV253Summary(detail, { bridge, session, onResetSession } = 
   const openAnother = wrap.querySelector('#v117OpenAnother');
   wrap.insertBefore(panel, openAnother || null);
   panel.querySelector('.v253ResetSession')?.addEventListener('click', () => onResetSession?.());
+  requestAnimationFrame(() => {
+    wrap.scrollTop = 0;
+    wrap.querySelector('.v88Fan')?.scrollIntoView?.({ block: 'start', behavior: 'instant' });
+    wrap.scrollTop = 0;
+  });
 }

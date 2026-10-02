@@ -70,3 +70,178 @@ body:has(#rip #v88Summary.v253SummaryActive) .nav{opacity:0!important;visibility
   #rip.active #v253PackHUD{top:166px;transform:translateX(-50%) scale(.92);transform-origin:50% 0}
   #rip #v88Summary.v253SummaryActive .v88Fan{height:104px!important;min-height:96px!important}
 }
+
+
+/* V253.2 — unified collector pill, summary-first card fan, Android extraction layering */
+#rip.active #v253PackHUD{
+  top:auto!important;
+  bottom:max(142px,calc(env(safe-area-inset-bottom) + 132px))!important;
+  left:50%!important;
+  width:min(392px,92vw)!important;
+  max-width:92vw!important;
+  min-height:44px!important;
+  transform:translateX(-50%)!important;
+  display:grid!important;
+  grid-template-columns:auto repeat(3,minmax(0,1fr))!important;
+  gap:0!important;
+  align-items:stretch!important;
+  padding:4px!important;
+  border:1px solid rgba(255,255,255,.96)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.88)!important;
+  box-shadow:0 12px 34px rgba(45,55,86,.14),inset 0 1px 0 rgba(255,255,255,.98)!important;
+  backdrop-filter:blur(20px) saturate(1.12)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(1.12)!important;
+  overflow:hidden!important;
+  z-index:72!important;
+  transition:opacity .16s ease,visibility .16s ease,transform .16s ease!important;
+}
+#rip.active #v253PackHUD.v253HudHidden{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateX(-50%) translateY(8px)!important;
+}
+#rip.active #v253PackHUD>*{pointer-events:auto}
+#rip.active #v253PackHUD .v253Fast,
+#rip.active #v253PackHUD .v253HudStat{
+  position:relative!important;
+  min-width:0!important;
+  min-height:36px!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:4px 8px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  color:#4b566c!important;
+}
+#rip.active #v253PackHUD .v253Fast{
+  justify-content:center!important;
+  gap:4px!important;
+  padding-inline:11px!important;
+}
+#rip.active #v253PackHUD .v253Fast.active{
+  background:linear-gradient(135deg,rgba(124,91,236,.94),rgba(151,95,239,.92))!important;
+  color:#fff!important;
+  box-shadow:0 5px 14px rgba(111,78,218,.24)!important;
+}
+#rip.active #v253PackHUD .v253HudStat{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+#rip.active #v253PackHUD .v253HudStat:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:8px;
+  bottom:8px;
+  width:1px;
+  background:rgba(92,104,128,.13);
+}
+#rip.active #v253PackHUD .v253HudStat small{
+  font-size:6px!important;
+  line-height:1!important;
+  letter-spacing:1px!important;
+  color:#8b95a8!important;
+}
+#rip.active #v253PackHUD .v253HudStat b{
+  max-width:100%!important;
+  margin-top:2px!important;
+  font-size:8px!important;
+  line-height:1.05!important;
+  color:#445066!important;
+  text-overflow:ellipsis!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+}
+body:has(#rip #v88Summary.v253SummaryActive) #v253PackHUD{display:none!important}
+
+/* Pack-complete view begins with the cards at the top, then scrolls through stats to the CTA. */
+#rip #v88Summary.v253SummaryActive{
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  padding:max(12px,env(safe-area-inset-top)) 12px max(110px,calc(env(safe-area-inset-bottom) + 92px))!important;
+  background:linear-gradient(180deg,rgba(249,253,255,.995),rgba(246,249,255,.992) 52%,rgba(253,248,255,.995))!important;
+  scroll-padding-top:max(12px,env(safe-area-inset-top))!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+#rip #v88Summary.v253SummaryActive .v88Fan{
+  order:0!important;
+  flex:0 0 auto!important;
+  width:min(560px,100%)!important;
+  height:clamp(205px,30dvh,270px)!important;
+  min-height:205px!important;
+  margin:0 auto 4px!important;
+  align-items:center!important;
+  overflow:visible!important;
+}
+#rip #v88Summary.v253SummaryActive .v88Fan img{
+  width:min(23%,94px)!important;
+  margin:0 -8px!important;
+}
+#rip #v88Summary.v253SummaryActive .v253Recap{
+  order:1!important;
+  margin:0 auto!important;
+}
+#rip #v88Summary.v253SummaryActive #v117OpenAnother{
+  order:2!important;
+  margin:12px auto 36px!important;
+  min-height:54px!important;
+}
+#rip #v88Summary.v253SummaryActive .v253ResetSession{margin-top:9px!important}
+
+/* Explicit extraction compositor order. Cards stay behind wrapper until clear of opening. */
+#v128Extract{isolation:isolate!important}
+#v128Extract .v128Wrapper{
+  z-index:30!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  will-change:transform,opacity!important;
+}
+#v128Extract .v128Wrapper img{
+  position:relative!important;
+  z-index:2!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+}
+#v128Extract .v128Cards{
+  z-index:20!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  will-change:transform!important;
+}
+#v128Extract .v128Hint{z-index:40!important}
+html[data-platform="android"] #v128Extract .v128Wrapper,
+html[data-platform="android"] #v128Extract .v128Cards{transform-style:flat!important}
+
+@media(max-width:620px){
+  #rip.active #v253PackHUD{
+    bottom:max(140px,calc(env(safe-area-inset-bottom) + 130px))!important;
+    width:min(380px,92vw)!important;
+    transform:translateX(-50%)!important;
+  }
+  #rip.active #v253PackHUD .v253Fast{padding-inline:9px!important}
+  #rip.active #v253PackHUD .v253HudStat{display:flex!important}
+  #rip.active #v253PackHUD .v253HudStat:nth-of-type(3){display:flex!important}
+  #rip #v88Summary.v253SummaryActive .v88Fan{
+    height:clamp(215px,31dvh,255px)!important;
+    min-height:215px!important;
+  }
+  #rip #v88Summary.v253SummaryActive .v88Fan img{width:min(24%,88px)!important}
+}
+@media(max-height:760px){
+  #rip.active #v253PackHUD{
+    bottom:max(132px,calc(env(safe-area-inset-bottom) + 124px))!important;
+    transform:translateX(-50%) scale(.94)!important;
+    transform-origin:50% 100%!important;
+  }
+  #rip #v88Summary.v253SummaryActive .v88Fan{height:190px!important;min-height:190px!important}
+}
