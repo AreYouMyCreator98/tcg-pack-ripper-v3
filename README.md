@@ -1,0 +1,1 @@
+# tcg-pack-ripper-v3
