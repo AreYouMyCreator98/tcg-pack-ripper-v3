@@ -1,20 +1,22 @@
 # Changelog
 
-## 0.252.0
-- Replaced legacy Binder artwork facade with real ES-module artwork cache/resolver/queue/database services.
-- Added modular Binder renderer, inspector, status/repair UI and pure Binder model.
-- Added a tiny lazy-loaded Binder compatibility bridge for existing economy/grading/save hooks.
-- Removed `runtime/artwork.js` from all loaded runtime groups.
-- Preserved V239 IndexedDB cache keys for existing player artwork caches.
-- Added current-page priority, adjacent-page prefetch and idle whole-collection prefetch.
-- Added iOS/Android-aware artwork concurrency limits.
-- Extracted ranked-frame IMG hydration into a source module.
-- Expanded automated coverage from 11 to 19 tests.
-- Save schema remains unchanged.
+## 0.251.0 — 2026-10-02
 
-## 0.251.0
-- Hardened startup and optional runtime loading.
-- Added Binder/artwork facade boundaries and post-migration checks.
+- Hardened modular startup with retryable, versioned UI/runtime loading.
+- Kept multiplayer, ranked and Binder artwork outside the startup critical path.
+- Added a modular Binder/artwork facade around the legacy V241 cache runtime.
+- Added Binder warm-up on first interaction without blocking Rip Packs.
+- Added in-browser UI health diagnostics exposed as `TCG_HEALTH`.
+- Added UI contract, runtime syntax, runtime-boundary, Binder-artwork and boot-order tests.
+- Preserved save schema, pack odds, economy, card ownership and backend data.
 
-## 0.250.0
-- Introduced the future-proof modular project structure.
+## 0.250.0 — 2026-10-02
+
+- Established modular/future-proof source tree around the playable V245-compatible runtime.
+- Added central build/config and feature flags.
+- Added non-destructive save schema/migration foundation.
+- Added asset hashing, runtime integrity checks and Node tests.
+- Added backend baseline metadata and dedicated Supabase source folders.
+- Added CI checks before deployment.
+- Added PWA update signalling and safer runtime chunk timeouts.
+- Preserved existing player state format and production backend behavior.

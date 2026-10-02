@@ -1,8 +1,0 @@
-{
-  "version": "0.252.0",
-  "buildId": "v252-binder-artwork-modular-1",
-  "saveSchemaVersion": 1,
-  "assetSchemaVersion": 1,
-  "compatibilityRuntime": "V245-compatible",
-  "binderArchitecture": "V252 modular renderer + local-first artwork cache"
-}
