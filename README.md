@@ -31,3 +31,8 @@ npm run release:check
 - `legacy/` — rollback reference only
 
 The production account/save backend remains Supabase and existing player progress is intentionally preserved.
+
+## V251 hardening
+
+V251 adds retryable modular loading, a Binder/artwork facade, runtime health checks, and expanded automated contract tests while preserving the existing save schema and gameplay rules. See `docs/POST_MIGRATION_TEST_REPORT.md`.
+

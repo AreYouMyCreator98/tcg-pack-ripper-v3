@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.251.0 — 2026-10-02
+
+- Hardened modular startup with retryable, versioned UI/runtime loading.
+- Kept multiplayer, ranked and Binder artwork outside the startup critical path.
+- Added a modular Binder/artwork facade around the legacy V241 cache runtime.
+- Added Binder warm-up on first interaction without blocking Rip Packs.
+- Added in-browser UI health diagnostics exposed as `TCG_HEALTH`.
+- Added UI contract, runtime syntax, runtime-boundary, Binder-artwork and boot-order tests.
+- Preserved save schema, pack odds, economy, card ownership and backend data.
+
 ## 0.250.0 — 2026-10-02
 
 - Established modular/future-proof source tree around the playable V245-compatible runtime.

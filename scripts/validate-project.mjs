@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 const root = new URL('../', import.meta.url).pathname;
 const required = [
-  'index.html','src/main.js','src/config/app-config.js','src/state/save-schema.js',
+  'index.html','src/main.js','src/config/app-config.js','src/state/save-schema.js','src/app/health-check.js','src/artwork/index.js','src/systems/binder.js',
   'public/runtime/core.js','public/runtime/packs.js','public/runtime/progression.js',
   'public/runtime/multiplayer.js','public/runtime/ranked.js','public/runtime/artwork.js',
   'public/manifest.webmanifest','public/sw.js','public/assets/manifest.json'

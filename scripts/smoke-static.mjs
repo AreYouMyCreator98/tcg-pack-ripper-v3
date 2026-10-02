@@ -24,7 +24,7 @@ await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const { port } = server.address();
 const base = `http://127.0.0.1:${port}/`;
 const checks = [
-  '', 'src/main.js', 'src/config/app-config.js', 'src/app/runtime-loader.js',
+  '', 'src/main.js', 'src/config/app-config.js', 'src/app/runtime-loader.js', 'src/app/health-check.js', 'src/artwork/index.js', 'src/systems/binder.js',
   'runtime/core.js', 'runtime/progression.js', 'runtime/special-collection.js', 'runtime/packs.js',
   'runtime/multiplayer.js', 'runtime/rank-frames.js', 'runtime/ranked.js', 'runtime/artwork.js',
   'styles/core.css', 'ui/chrome.html', 'ui/screens/rip.html', 'ui/screens/binder.html',
