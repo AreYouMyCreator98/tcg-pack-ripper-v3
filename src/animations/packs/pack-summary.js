@@ -8,11 +8,15 @@ export function renderV253Summary(detail, { bridge, session, onResetSession } = 
   const wrap = document.getElementById('v88Summary');
   if (!wrap || !detail?.cards?.length) return;
   wrap.querySelector('.v253Recap')?.remove();
+  wrap.classList.add('v253SummaryActive');
   const result = summarizePackCards(detail.cards, card => bridge.route(card));
   const snap = session.snapshot();
   const s = snap.session, p = snap.persistent;
   const best = result.best || detail.best || {};
   const recentPayment = window.__tcgV253LastPayment || {};
+  const xpStat = [...wrap.querySelectorAll('.v88Stats b')].find(node => /\bXP\b/i.test(node.textContent || ''));
+  const xpMatch = String(xpStat?.textContent || '').match(/XP\s*\+?\s*(\d+)/i);
+  const xpText = xpMatch ? `+${xpMatch[1]}` : '—';
   const rarity = result.rarity.slice(0, 5).map(x => `<span><b>${x.count}×</b>${esc(x.rarity)}</span>`).join('');
 
   const panel = document.createElement('section');
@@ -28,6 +32,7 @@ export function renderV253Summary(detail, { bridge, session, onResetSession } = 
       <div><small>BINDER / BULK</small><b>${result.binder} / ${result.bulk}</b></div>
       <div><small>PAID</small><b>${esc(paymentLabel(recentPayment))}</b></div>
     </div>
+    <div class="v253RecapMini"><span>⚡ XP <b>${esc(xpText)}</b></span><span>✦ ${result.cards} CARDS</span></div>
     <div class="v253RarityBreakdown">${rarity}</div>
     <div class="v253SessionRecap">
       <div><small>THIS SESSION</small><b>${s.packs} PACKS · ${s.hits} HIT PACKS · ${s.uniqueAdded} NEW</b></div>

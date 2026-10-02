@@ -52,3 +52,12 @@ test('session best pull never downgrades rarity tier for a higher market price',
   assert.equal(best.rarity, 'Special illustration rare');
   assert.equal(best.tier, 4);
 });
+
+test('session value can reconcile generation-time placeholders to final resolved value', () => {
+  const s = new PackSession();
+  const placeholder = Array.from({ length: 10 }, (_, i) => ({ id: `p-${i}`, rarity: 'Common', market: .1 }));
+  s.recordPack({ cards: placeholder, cashSpent: 8 });
+  assert.ok(Math.abs(s.snapshot().session.valueGenerated - 1) < 1e-9);
+  s.reconcileOpeningValue(1, 12.34);
+  assert.equal(s.snapshot().session.valueGenerated, 12.34);
+});

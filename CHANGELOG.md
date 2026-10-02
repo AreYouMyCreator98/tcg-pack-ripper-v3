@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.253.1
+- Fixed session value reconciliation so completed openings use resolved market values instead of generation-time $0.10 fallbacks.
+- Moved the V253 live HUD out from behind the mobile set shelf and anchored FAST / SESSION / SIR+ below the clock row.
+- Changed Reveal All helper copy from `CARDS LEFT` to `TO COLLECT`, matching its behavior of collecting the currently displayed card plus the remainder.
+- Unified the mobile pack-complete screen: removed duplicate legacy stat tiles, kept the card fan, added compact XP/card metadata, hid the nav under the summary, and made the summary scroll safely on short screens.
+- Reduced Reset Session Stats to a secondary pill action while keeping Open Another as the primary CTA.
+- Pull rates, rewards, routing and save schema remain unchanged.
+
 ## 0.253.0
 - Added modular Pack Engine, generator contract, session tracking, recap and rate snapshot modules.
 - Added Reveal 2.0 rarity profiles and card-specific reveal keys.

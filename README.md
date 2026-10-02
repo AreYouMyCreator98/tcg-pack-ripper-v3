@@ -1,4 +1,4 @@
-# TCG Pack Ripper+ — V253
+# TCG Pack Ripper+ — V253.1
 
 The playable game is maintained as a modular Vite/static-Pages project while preserving compatibility with existing player saves and the current Supabase backend.
 

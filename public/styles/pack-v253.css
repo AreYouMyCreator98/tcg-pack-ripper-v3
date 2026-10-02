@@ -1,5 +1,5 @@
 /* V253 — Pack Engine + Reveal 2.0 */
-#v253PackHUD{position:absolute;top:max(8px,env(safe-area-inset-top));left:8px;z-index:185;display:flex;gap:5px;align-items:stretch;pointer-events:none;max-width:calc(100% - 16px);font-family:system-ui,-apple-system,sans-serif}
+#v253PackHUD{position:fixed;top:190px;left:50%;transform:translateX(-50%);z-index:5900;display:flex;gap:5px;align-items:stretch;pointer-events:none;max-width:calc(100% - 20px);font-family:system-ui,-apple-system,sans-serif}
 #v253PackHUD>*{pointer-events:auto}
 .v253PackHUD .v253Fast,.v253PackHUD .v253HudStat{min-height:38px;border:1px solid rgba(255,255,255,.88);border-radius:14px;background:rgba(255,255,255,.67);box-shadow:0 7px 22px rgba(50,66,101,.09),inset 0 1px 0 #fff;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);color:#445066}
 .v253PackHUD .v253Fast{display:flex;align-items:center;gap:5px;padding:0 9px;font:900 9px/1 system-ui;letter-spacing:.25px}
@@ -35,8 +35,38 @@ html[data-performance="balanced"] #stack.v253Reveal .revealCard:after{mix-blend-
 .v253SessionRecap{display:grid;gap:4px;margin-top:6px}.v253SessionRecap>div{display:flex;align-items:center;justify-content:space-between;gap:8px}.v253SessionRecap b{font:900 8px/1.2 system-ui;text-align:right}.v253ResetSession{display:block;margin:7px 0 0 auto;border:0;background:transparent;color:#8993a5;font:850 7px/1 system-ui;letter-spacing:.55px;padding:5px}
 
 @media(max-width:620px){
-  #v253PackHUD{top:6px;gap:4px}.v253PackHUD .v253HudStat{min-width:0;max-width:92px;padding:5px 6px}.v253PackHUD .v253HudStat:nth-of-type(3){display:none}.v253PackHUD .v253Fast{padding:0 8px}
+  #rip.active #v253PackHUD{top:190px;gap:4px}.v253PackHUD .v253HudStat{min-width:0;max-width:90px;padding:4px 6px;min-height:34px}.v253PackHUD .v253HudStat:nth-of-type(3){display:none}.v253PackHUD .v253Fast{padding:0 8px;min-height:34px}
   .v253TenTools{bottom:max(100px,calc(env(safe-area-inset-bottom) + 94px))}
   .v253Recap{padding:9px;margin-top:6px}.v253RecapGrid{grid-template-columns:repeat(2,1fr)}
 }
 @media(prefers-reduced-motion:reduce){#stack.v253Reveal .revealCard:after,#stack.v253FastRare{animation:none!important}}
+
+
+/* V253.1 — mobile HUD + summary polish */
+#rip.active #v253PackHUD{display:flex!important;visibility:visible!important;opacity:1!important}
+body:has(#rip #v88Summary.v253SummaryActive) #v253PackHUD{display:none!important}
+body:has(#rip #v88Summary.v253SummaryActive) .nav{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+
+#rip #v88Summary.v253SummaryActive{overflow-y:auto!important;overflow-x:hidden!important;justify-content:flex-start!important;gap:8px!important;padding:18px 14px 96px!important;overscroll-behavior:contain!important}
+#rip #v88Summary.v253SummaryActive>h3,#rip #v88Summary.v253SummaryActive>div:nth-child(2){display:none!important}
+#rip #v88Summary.v253SummaryActive .v88Fan{height:clamp(118px,19dvh,160px)!important;min-height:112px!important;margin:0!important}
+#rip #v88Summary.v253SummaryActive .v88Fan img{width:min(20%,78px)!important;margin:0 -7px!important}
+#rip #v88Summary.v253SummaryActive .v88Stats{display:none!important}
+#rip #v88Summary.v253SummaryActive .v253Recap{flex:0 0 auto!important;width:min(430px,94vw)!important;margin:0 auto!important;padding:10px!important;border-radius:20px!important}
+#rip #v88Summary.v253SummaryActive #v117OpenAnother{flex:0 0 auto!important;margin:2px auto 0!important;width:min(430px,94vw)!important;min-height:52px!important;position:relative!important;z-index:20!important}
+#rip #v88Summary.v253SummaryActive .v253ResetSession{display:block!important;width:auto!important;min-width:0!important;min-height:0!important;margin:7px 0 0 auto!important;padding:7px 10px!important;border:1px solid rgba(122,132,154,.16)!important;border-radius:999px!important;background:rgba(245,247,252,.74)!important;box-shadow:none!important;color:#7f899b!important;font:850 7px/1 system-ui!important;letter-spacing:.55px!important}
+.v253RecapMini{display:flex;justify-content:space-between;gap:8px;margin:6px 0 1px;padding:0 3px;color:#7d879a;font:850 7px/1.2 system-ui;letter-spacing:.35px}.v253RecapMini b{color:#4e596f}
+
+@media(max-width:620px){
+  #rip.active #v253PackHUD{top:190px;max-width:94vw}
+  #rip #v88Summary.v253SummaryActive{padding-top:12px!important;gap:6px!important}
+  #rip #v88Summary.v253SummaryActive .v88Fan{height:126px!important;min-height:112px!important}
+  #rip #v88Summary.v253SummaryActive .v253Recap{padding:9px!important}
+  #rip #v88Summary.v253SummaryActive .v253RecapBest{margin-bottom:7px}
+  #rip #v88Summary.v253SummaryActive .v253RecapGrid>div{padding:6px 7px}
+  #rip #v88Summary.v253SummaryActive .v253SessionRecap{margin-top:4px}
+}
+@media(max-height:760px){
+  #rip.active #v253PackHUD{top:166px;transform:translateX(-50%) scale(.92);transform-origin:50% 0}
+  #rip #v88Summary.v253SummaryActive .v88Fan{height:104px!important;min-height:96px!important}
+}

@@ -63,6 +63,14 @@ export class PackSession {
     if (detail.wasNew) this.session.uniqueAdded++;
   }
 
+  reconcileOpeningValue(generatedValue, resolvedValue) {
+    const generated = Number(generatedValue || 0);
+    const resolved = Number(resolvedValue || 0);
+    if (!Number.isFinite(generated) || !Number.isFinite(resolved)) return this.session.valueGenerated;
+    this.session.valueGenerated = Math.max(0, this.session.valueGenerated + (resolved - generated));
+    return this.session.valueGenerated;
+  }
+
   reset() { this.session = blankSession(); }
   snapshot() { return { session: { ...this.session, best: this.session.best ? { ...this.session.best } : null }, persistent: { ...this.persistent } }; }
 }

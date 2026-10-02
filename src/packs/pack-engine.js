@@ -1,5 +1,6 @@
 import { PackSession } from './pack-session.js';
 import { validateGeneratedPack } from './pack-generator.js';
+import { summarizePackCards } from './pack-results.js';
 import { GOD_PACK_RATE, PACK_RATE_SNAPSHOT, SV_REVERSE_UPGRADES } from './pack-rates.js';
 import { installRevealController } from '../animations/packs/reveal-controller.js';
 import { installPackHUD } from './pack-hud.js';
@@ -19,6 +20,7 @@ export function installPackEngine(target = window) {
   const reveal = installRevealController(target);
   let tenController = null;
   let openingPayment = zeroPayment();
+  let openingGeneratedValue = 0;
 
   const resetSession = () => {
     session.reset();
@@ -45,6 +47,7 @@ export function installPackEngine(target = window) {
     openingPayment.cashSpent += Number(detail.cashSpent || 0);
     openingPayment.starterUsed += Number(detail.starterUsed || 0);
     openingPayment.creditsUsed += Number(detail.creditsUsed || 0);
+    openingGeneratedValue += summarizePackCards(detail.cards || [], bridge.route).value;
     bridge.writePersistentStats?.(session.snapshot().persistent);
     hud?.update(session.snapshot(), reveal.isFast());
     target.TCG_DIAGNOSTICS?.mark?.('pack-generated', { set: detail.set?.id, god: !!detail.godPack, bestTier: result.meta.bestTier });
@@ -56,9 +59,13 @@ export function installPackEngine(target = window) {
   };
 
   const onSummary = event => {
+    const detail = event.detail || {};
+    const resolvedOpeningValue = summarizePackCards(detail.cards || [], bridge.route).value;
+    session.reconcileOpeningValue(openingGeneratedValue, resolvedOpeningValue);
     target.__tcgV253LastPayment = { ...openingPayment };
-    renderV253Summary(event.detail || {}, { bridge, session, onResetSession: resetSession });
+    renderV253Summary(detail, { bridge, session, onResetSession: resetSession });
     openingPayment = zeroPayment();
+    openingGeneratedValue = 0;
     hud?.update(session.snapshot(), reveal.isFast());
   };
 
@@ -68,7 +75,7 @@ export function installPackEngine(target = window) {
   target.addEventListener('tcg:fast-reveal-changed', () => hud?.update(session.snapshot(), reveal.isFast()));
 
   const api = Object.freeze({
-    version: '0.253.0',
+    version: '0.253.1',
     snapshot: () => bridge.snapshot(),
     session: () => session.snapshot(),
     resetSession,

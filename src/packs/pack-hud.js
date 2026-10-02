@@ -4,7 +4,8 @@ function el(id) { return document.getElementById(id); }
 
 export function installPackHUD({ onToggleFast, onRevealAll, onResetSession } = {}) {
   const stage = el('stage');
-  if (!stage) return null;
+  const rip = el('rip');
+  if (!stage || !rip) return null;
   el('v253PackHUD')?.remove();
   el('v253TenTools')?.remove();
 
@@ -16,7 +17,7 @@ export function installPackHUD({ onToggleFast, onRevealAll, onResetSession } = {
     <div class="v253HudStat"><small>SESSION</small><b id="v253SessionPacks">0 PACKS</b></div>
     <div class="v253HudStat"><small>SIR+</small><b id="v253SirStreak">—</b></div>
     <div class="v253HudStat"><small>GOD</small><b id="v253GodStreak">—</b></div>`;
-  stage.appendChild(hud);
+  rip.appendChild(hud);
 
   const ten = document.createElement('div');
   ten.id = 'v253TenTools';
@@ -41,7 +42,7 @@ export function installPackHUD({ onToggleFast, onRevealAll, onResetSession } = {
   function showRevealAll(remaining) {
     const root = el('v253TenTools'), small = el('v253RevealRemaining');
     if (root) root.classList.toggle('show', Number(remaining) > 1);
-    if (small) small.textContent = Number(remaining) > 1 ? `${remaining} CARDS LEFT` : '';
+    if (small) small.textContent = Number(remaining) > 1 ? `${remaining} TO COLLECT` : '';
   }
 
   function setRevealAllText(text, armed = false) {
