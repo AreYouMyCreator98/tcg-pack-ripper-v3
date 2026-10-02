@@ -1,6 +1,6 @@
 import { mountUI } from './ui.js';
 import { configurePlatform } from './platform/mobile.js';
-import { loadCriticalRuntime, scheduleSecondaryRuntime } from './app/runtime-loader.js';
+import { loadCriticalRuntime, loadPackRuntime, scheduleSecondaryRuntime } from './app/runtime-loader.js';
 import { installNavigationPreload } from './app/navigation-preload.js';
 import { installDiagnostics, bootMark } from './app/diagnostics.js';
 import { installHealthCheck } from './app/health-check.js';
@@ -8,6 +8,7 @@ import { registerPWA } from './pwa/register.js';
 import { installImagePolicy } from './platform/image-policy.js';
 import { installScreenTransitions } from './animations/screen-transitions.js';
 import { installBinderModule } from './systems/binder.js';
+import { installPackModule } from './systems/packs.js';
 import { installRankFrameRenderer } from './systems/rank-frame-renderer.js';
 import { APP_CONFIG, exposeAppConfig } from './config/app-config.js';
 
@@ -73,6 +74,17 @@ async function boot() {
     setStatus('Starting game systems…');
     await loadCriticalRuntime();
     bootMark('critical-runtime-ready');
+
+    // V253 is deliberately additive: if its modular bridge/UI fails, the proven
+    // V252 pack generator and reveal flow stay usable instead of blocking boot.
+    try {
+      await loadPackRuntime();
+      installPackModule();
+      bootMark('pack-engine-ready');
+    } catch (error) {
+      console.error('[TCG] V253 pack engine unavailable; using legacy pack flow', error);
+      bootMark('pack-engine-failed', { message: String(error?.message || error) });
+    }
 
     bootStage = 'finishing startup';
     document.documentElement.classList.remove('modern-booting');

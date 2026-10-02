@@ -11,6 +11,12 @@ export const binderRuntime = [
   'runtime/binder-bridge.js'
 ];
 
+// V253 modular pack engine observes the proven V252 generator through this
+// tiny compatibility bridge. Failure here must not stop the legacy pack flow.
+export const packRuntime = [
+  'runtime/pack-bridge.js'
+];
+
 export const secondaryRuntime = [
   'runtime/multiplayer.js',
   'runtime/rank-frames.js',

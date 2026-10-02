@@ -27,10 +27,12 @@ const checks = [
   '', 'src/main.js', 'src/config/app-config.js', 'src/app/runtime-loader.js', 'src/app/health-check.js',
   'src/artwork/index.js', 'src/artwork/artwork-cache.js', 'src/artwork/artwork-db.js', 'src/artwork/artwork-resolver.js', 'src/artwork/artwork-queue.js', 'src/artwork/card-identity.js',
   'src/screens/binder/index.js', 'src/screens/binder/binder-renderer.js', 'src/screens/binder/binder-inspector.js', 'src/screens/binder/binder-model.js', 'src/screens/binder/binder-status.js', 'src/screens/binder/binder-bridge.js',
-  'src/systems/binder.js', 'src/systems/rank-frame-renderer.js',
-  'runtime/core.js', 'runtime/progression.js', 'runtime/special-collection.js', 'runtime/packs.js', 'runtime/binder-bridge.js',
+  'src/systems/binder.js', 'src/systems/packs.js', 'src/systems/rank-frame-renderer.js',
+  'src/packs/index.js', 'src/packs/pack-engine.js', 'src/packs/pack-generator.js', 'src/packs/pack-results.js', 'src/packs/pack-session.js', 'src/packs/pack-history.js', 'src/packs/pack-costs.js', 'src/packs/pack-hud.js',
+  'src/animations/packs/reveal-profile.js', 'src/animations/packs/reveal-controller.js', 'src/animations/packs/ten-pack-controller.js', 'src/animations/packs/pack-summary.js',
+  'runtime/core.js', 'runtime/progression.js', 'runtime/special-collection.js', 'runtime/packs.js', 'runtime/pack-bridge.js', 'runtime/binder-bridge.js',
   'runtime/multiplayer.js', 'runtime/rank-frames.js', 'runtime/ranked.js',
-  'styles/core.css', 'styles/binder.css', 'ui/chrome.html', 'ui/screens/rip.html', 'ui/screens/binder.html',
+  'styles/core.css', 'styles/pack-v253.css', 'styles/binder.css', 'ui/chrome.html', 'ui/screens/rip.html', 'ui/screens/binder.html',
   'assets/manifest.json', 'manifest.webmanifest', 'sw.js'
 ];
 try {

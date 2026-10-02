@@ -1,4 +1,4 @@
-import { criticalRuntime, binderRuntime, secondaryRuntime } from '../config/runtime-manifest.js';
+import { criticalRuntime, binderRuntime, packRuntime, secondaryRuntime } from '../config/runtime-manifest.js';
 import { APP_CONFIG } from '../config/app-config.js';
 import { withTimeout } from '../utils/async.js';
 
@@ -90,6 +90,10 @@ export async function loadCriticalRuntime() {
 
 export function loadBinderRuntime() {
   return loadGroup('binder-runtime', binderRuntime, 12000);
+}
+
+export function loadPackRuntime() {
+  return loadGroup('pack-runtime', packRuntime, 12000);
 }
 
 export function loadSecondaryRuntime() {

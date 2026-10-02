@@ -1,16 +1,29 @@
-# TCG Pack Ripper+ — V252
+# TCG Pack Ripper+ — V253
 
-The playable game is now maintained as a modular Vite/static-Pages project while preserving compatibility with existing player saves and the current Supabase backend.
+The playable game is maintained as a modular Vite/static-Pages project while preserving compatibility with existing player saves and the current Supabase backend.
 
-## V252 focus
-Binder and card artwork are now real source modules rather than another compatibility patch inside the legacy artwork runtime. `runtime/artwork.js` remains in the repository only as rollback/reference history and is not loaded by the game.
+## V253 focus — Pack Engine + Reveal 2.0
+V253 puts pack-session orchestration, reveal profiles, recap UI, streak tracking and 10-pack quality-of-life features into real ES modules. The proven V252 probability generator remains the source of truth behind a tiny compatibility bridge, so this update does **not** rebalance pull rates.
 
-### Binder architecture
-- `src/screens/binder/` — renderer, inspector, model, status and bridge adapter.
-- `src/artwork/` — card identity, IndexedDB cache, resolver, priority queue and high-level cache service.
-- `public/runtime/binder-bridge.js` — the only Binder-specific bridge into legacy state/economy/grading globals.
+### Pack architecture
+- `src/packs/` — pack engine, generator contract, rates snapshot, session stats, results, costs and HUD.
+- `src/animations/packs/` — rarity profiles, reveal controller, 10-pack controller and recap renderer.
+- `public/runtime/pack-bridge.js` — tiny bridge into the existing generator/collection globals.
+- `runtime/packs.js` remains loaded for compatibility while later releases continue extracting historical pack-specific patches.
 
-The Binder opens from local game state immediately. Visible art is highest priority, neighboring pages prefetch next, and the rest of the collection caches during idle time.
+### Reveal 2.0
+- Card-specific reveal keys prevent stale-card presentation in the new layer.
+- Rarity-specific reveal intensity from base/foil through chase/apex/God Pack.
+- **Fast Reveal** skips the long cinematic while keeping hit feedback.
+- **Reveal All** in 10-pack mode uses a two-tap safety guard and routes every remaining card exactly once.
+- Current mobile performance mode automatically tones down extra blend effects.
+
+### Session stats
+- Packs opened, hit packs, SIR+ packs and God Packs.
+- Cash spent, starter packs used, sealed credits used and generated value.
+- Binder/Bulk additions and unique cards added this session.
+- Persistent packs-since-SIR+, packs-since-God-Pack and hit-streak counters.
+- Enhanced end-of-opening recap with best pull and rarity breakdown.
 
 ## Development
 ```bash
@@ -27,4 +40,4 @@ npm run validate
 ## Production
 GitHub Actions builds Vite `dist/` and deploys it to GitHub Pages. `npm run deploy:static` also creates a directly servable static build for diagnostics.
 
-Existing save schema: **1**. V252 does not migrate or reset existing player data.
+Existing save schema: **1**. V253 adds only optional state fields and does not reset or migrate existing player data.

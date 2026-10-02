@@ -1,10 +1,10 @@
 export const APP_CONFIG = Object.freeze({
   name: 'TCG Pack Ripper+',
-  version: '0.252.0',
-  buildId: 'v252-binder-artwork-modular-1',
+  version: '0.253.0',
+  buildId: 'v253-pack-engine-reveal-2-1',
   saveSchemaVersion: 1,
   assetSchemaVersion: 1,
-  cacheVersion: 'tcg-v252-1',
+  cacheVersion: 'tcg-v253-1',
   supabase: Object.freeze({
     projectRef: 'ddeuwrnfmdgvizkrjhii',
     url: 'https://ddeuwrnfmdgvizkrjhii.supabase.co',
@@ -17,6 +17,8 @@ export const APP_CONFIG = Object.freeze({
     accountFirstSaves: true,
     binderArtworkCache: true,
     modularBinderV252: true,
+    modularPackV253: true,
+    revealEngineV253: true,
     nativeShell: false,
     experimentalRenderer: false
   })

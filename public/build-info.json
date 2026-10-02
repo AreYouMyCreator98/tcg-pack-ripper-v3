@@ -1,8 +1,9 @@
 {
-  "version": "0.252.0",
-  "buildId": "v252-binder-artwork-modular-1",
+  "version": "0.253.0",
+  "buildId": "v253-pack-engine-reveal-2-1",
   "saveSchemaVersion": 1,
   "assetSchemaVersion": 1,
   "compatibilityRuntime": "V245-compatible",
-  "binderArchitecture": "V252 modular renderer + local-first artwork cache"
+  "binderArchitecture": "V252 modular renderer + local-first artwork cache",
+  "packArchitecture": "V253 modular session/reveal engine + legacy probability bridge"
 }
