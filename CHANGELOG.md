@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.255.2
+- Fixed V255.1 startup stalls at the 47% Loading Collection phase.
+- Service worker registration/update now begins before critical runtime loading, breaking stale-cache startup deadlocks.
+- Corrected stale V255.0 app-config import query in main.js.
+- Runtime/source/UI files are network-first with cache fallback.
+- Timed-out runtime script elements are removed before retry to prevent duplicate late execution.
+- Critical boot progress now identifies the exact runtime chunk being restored.
+- Added a 28-second startup watchdog that converts an endless splash into an actionable retry screen.
+- No save, economy, pull-rate or multiplayer-data changes.
+
 ## 0.255.1
 - Fixed ranked READY on in-app/mobile browsers with direct pointer/touch wiring plus click fallback.
 - Added server polling fallback so ready state syncs even when a realtime event is missed.

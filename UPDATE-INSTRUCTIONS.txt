@@ -1,10 +1,18 @@
-V255.1 UPDATE — RANKED READY FIX
-================================
+V255.2 STARTUP RECOVERY
+======================
 1. Extract this ZIP.
-2. Copy the CONTENTS into the root of tcg-pack-ripper-v3.
-3. Replace files in destination.
-4. GitHub Desktop -> commit `V255.1 ranked ready fix` -> Push origin.
-5. Wait for Actions to go green.
-6. Both players should fully reload the site once so service-worker cache 0.255.1 takes over.
+2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
+3. Choose Replace files in destination.
+4. GitHub Desktop -> commit: V255.2 startup recovery
+5. Push origin and wait for Actions to go green.
+6. On the phone that was stuck, fully close the browser/in-app browser once, reopen the game, and allow the new worker to take control.
 
-Fixes mobile/in-app READY handling, adds polling fallback, and adds MATCH FOUND cinematic before the existing VS banner intro.
+What this fixes:
+- 47% Loading Collection startup stalls caused by mixed old/new cached runtime files.
+- Service worker now refreshes at the start of boot, not after boot.
+- Runtime code uses network-first cache behavior with offline fallback.
+- Timed-out scripts are removed before retry.
+- Loader shows the exact critical chunk being restored.
+- A watchdog prevents an endless splash.
+
+No player saves, cards, cash, pull rates or multiplayer records are changed.

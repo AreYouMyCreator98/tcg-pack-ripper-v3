@@ -13,27 +13,57 @@ function runtimeUrl(path, attempt = 0) {
 }
 
 function injectClassicScript(path, attempt) {
-  return new Promise((resolve, reject) => {
-    const tag = document.createElement('script');
+  let tag;
+  let settled = false;
+  let resolvePromise;
+  let rejectPromise;
+  const promise = new Promise((resolve, reject) => {
+    resolvePromise = resolve;
+    rejectPromise = reject;
+    tag = document.createElement('script');
     tag.src = runtimeUrl(path, attempt);
     tag.async = false;
     tag.dataset.runtimeChunk = path;
     tag.dataset.runtimeAttempt = String(attempt + 1);
-    tag.onload = () => resolve(path);
+    tag.onload = () => {
+      if (settled) return;
+      settled = true;
+      resolve(path);
+    };
     tag.onerror = () => {
+      if (settled) return;
+      settled = true;
       tag.remove();
       reject(new Error(`Failed to load ${path} (attempt ${attempt + 1})`));
     };
     document.body.appendChild(tag);
   });
+
+  return {
+    promise,
+    cancel(reason = 'cancelled') {
+      if (settled) return;
+      settled = true;
+      if (tag) {
+        tag.onload = null;
+        tag.onerror = null;
+        tag.remove();
+      }
+      rejectPromise?.(new Error(`${path} ${reason}`));
+    }
+  };
 }
 
 async function loadWithRetry(path, timeoutMs) {
   let lastError;
   for (let attempt = 0; attempt < 2; attempt++) {
+    const task = injectClassicScript(path, attempt);
     try {
-      return await withTimeout(injectClassicScript(path, attempt), timeoutMs, `runtime ${path}`);
+      return await withTimeout(task.promise, timeoutMs, `runtime ${path}`);
     } catch (error) {
+      task.cancel('timed out');
+      // Prevent a rejected cancelled promise from surfacing after the timeout race.
+      task.promise.catch(() => {});
       lastError = error;
       if (attempt === 0) await new Promise(resolve => setTimeout(resolve, 180));
     }
@@ -41,7 +71,7 @@ async function loadWithRetry(path, timeoutMs) {
   throw lastError || new Error(`Failed to load ${path}`);
 }
 
-export function loadClassicScript(path, timeoutMs = 20000) {
+export function loadClassicScript(path, timeoutMs = 12000) {
   if (loaded.has(path)) return loaded.get(path);
   const promise = loadWithRetry(path, timeoutMs).catch(error => {
     loaded.delete(path);
@@ -84,20 +114,22 @@ function loadGroup(name, paths, timeoutMs) {
 }
 
 export async function loadCriticalRuntime() {
-  await loadSequence(criticalRuntime, 20000, 'critical');
+  // Critical chunks are local static files. If one cannot load twice within ~11s,
+  // fail with the exact filename rather than pinning the splash indefinitely.
+  await loadSequence(criticalRuntime, 5500, 'critical');
   window.dispatchEvent(new CustomEvent('tcg:critical-ready'));
 }
 
 export function loadBinderRuntime() {
-  return loadGroup('binder-runtime', binderRuntime, 12000);
+  return loadGroup('binder-runtime', binderRuntime, 9000);
 }
 
 export function loadPackRuntime() {
-  return loadGroup('pack-runtime', packRuntime, 12000);
+  return loadGroup('pack-runtime', packRuntime, 9000);
 }
 
 export function loadSecondaryRuntime() {
-  return loadGroup('secondary', secondaryRuntime, 25000);
+  return loadGroup('secondary', secondaryRuntime, 14000);
 }
 
 export function scheduleSecondaryRuntime() {
