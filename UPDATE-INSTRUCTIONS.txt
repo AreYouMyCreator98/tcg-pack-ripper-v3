@@ -1,18 +1,10 @@
-V255 MULTIPLAYER ARENA
-======================
-The Supabase migration has ALREADY been applied to your live project.
-
+V255.1 UPDATE — RANKED READY FIX
+================================
 1. Extract this ZIP.
-2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
-3. Choose Replace files in destination.
-4. In GitHub Desktop confirm paths such as public/runtime/multiplayer-v255.js and public/styles/multiplayer-v255.css stay inside their folders.
-5. Commit: V255 Multiplayer Arena
-6. Push origin.
-7. Wait for GitHub Actions to go green.
-8. Hard refresh once so the V255 service-worker cache replaces V254.1.
+2. Copy the CONTENTS into the root of tcg-pack-ripper-v3.
+3. Replace files in destination.
+4. GitHub Desktop -> commit `V255.1 ranked ready fix` -> Push origin.
+5. Wait for Actions to go green.
+6. Both players should fully reload the site once so service-worker cache 0.255.1 takes over.
 
-Test with two signed-in accounts:
-- Quick Match -> both players must READY.
-- Confirm VS intro shows photo/frame/badges/record.
-- Profile -> Battle Banner changes appear on the next match.
-- Trade -> Global Chat updates live on both devices.
+Fixes mobile/in-app READY handling, adds polling fallback, and adds MATCH FOUND cinematic before the existing VS banner intro.

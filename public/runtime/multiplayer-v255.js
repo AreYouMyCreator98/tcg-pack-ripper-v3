@@ -18,8 +18,8 @@
   const STYLE_IDS=['aurora','obsidian','gold','neon','crystal','ember'];
   const profileCache=new Map();
   const messageIds=new Set();
-  let client=null,me=null,chatChannel=null,readyChannel=null,readyRoomId='',latestRoom=null,introPlaying=false,unread=0;
-  let installTimer=null;
+  let client=null,me=null,chatChannel=null,readyChannel=null,readyRoomId='',latestRoom=null,introPlaying=false,matchFoundPlaying=false,unread=0;
+  let installTimer=null,readyPollBusy=false,lastReadyTapAt=0;
 
   function mp(){return window.tcgMultiplayerV218||null}
   function toastV255(msg){try{window.toast?.(msg)}catch(_){console.log(msg)}}
@@ -234,15 +234,54 @@
   function introSeen(id){try{return sessionStorage.getItem(introKey(id))==='1'}catch(_){return false}}
   function markIntro(id){try{sessionStorage.setItem(introKey(id),'1')}catch(_){} }
 
+  function matchFoundKey(id){return `tcgMatchFoundV2551:${id}`}
+  function matchFoundSeen(id){try{return sessionStorage.getItem(matchFoundKey(id))==='1'}catch(_){return false}}
+  function markMatchFound(id){try{sessionStorage.setItem(matchFoundKey(id),'1')}catch(_){} }
+
+  async function playMatchFound(r){
+    if(matchFoundPlaying||matchFoundSeen(r?.id)||!matchRoom(r)||started(r))return;
+    matchFoundPlaying=true;
+    try{
+      const profiles=await fetchProfiles([r.host_id,r.guest_id],{force:true});
+      const myId=r.host_id===me?.id?r.host_id:r.guest_id,oppId=myId===r.host_id?r.guest_id:r.host_id;
+      const mine=profiles[myId]||localProfile(),opp=profiles[oppId]||{display_name:'Collector'};
+      q('#mpMatchFoundV2551')?.remove();
+      const o=document.createElement('div');o.id='mpMatchFoundV2551';o.className='mpMatchFoundV2551';
+      o.innerHTML=`<div class="mpMatchFoundBackdropV2551"></div><div class="mpMatchFoundPulseV2551"></div><div class="mpMatchFoundCoreV2551"><small>RANKED QUEUE</small><h2>MATCH FOUND</h2><div class="mpMatchFoundPlayersV2551"><div>${avatarMarkup(mine,'found')}<b>${esc(mine.display_name||'Collector')}</b></div><span><i></i>VS<i></i></span><div>${avatarMarkup(opp,'found')}<b>${esc(opp.display_name||'Collector')}</b></div></div><strong>READY CHECK</strong></div>`;
+      document.body.appendChild(o);requestAnimationFrame(()=>o.classList.add('show'));
+      try{navigator.vibrate?.([18,25,34])}catch(_){}
+      await sleep(1200);o.classList.add('lock');await sleep(520);o.classList.add('leave');await sleep(300);o.remove();markMatchFound(r.id);
+    }finally{matchFoundPlaying=false;setTimeout(()=>applyReadyUI(roomNow()||r),0)}
+  }
+
   async function setBattleReady(next){
     const r=roomNow();if(!matchRoom(r)||started(r))return;
+    if(Date.now()-lastReadyTapAt<420)return;lastReadyTapAt=Date.now();
     if(!await ensureContext())return toastV255('Sign in first.');
-    const btn=q('#mpBattleReadyBtnV255');if(btn){btn.disabled=true;btn.textContent='SYNCING BANNER…'}
+    const btn=q('#mpBattleReadyBtnV255');if(btn){btn.disabled=true;btn.textContent=next?'LOCKING IN…':'UNREADYING…'}
     await syncMyProfile({quiet:true});
-    try{const {data,error}=await client.rpc('mp_set_battle_ready',{p_room_id:r.id,p_ready:!!next});if(error)throw error;latestRoom=data;applyReadyUI(data)}catch(e){toastV255(errText(e))}finally{const b=q('#mpBattleReadyBtnV255');if(b)b.disabled=false}
+    try{
+      const {data,error}=await client.rpc('mp_set_battle_ready',{p_room_id:r.id,p_ready:!!next});if(error)throw error;
+      latestRoom=data;applyReadyUI(data);
+      setTimeout(()=>pollReadyRoom(true),120);
+    }catch(e){toastV255(errText(e))}finally{const b=q('#mpBattleReadyBtnV255');if(b)b.disabled=false}
   }
 
   function miniReadyCard(p,label,isReady){return `<div class="mpReadyPlayerV255 ${isReady?'ready':''}">${avatarMarkup(p,'ready')}<div><small>${esc(label)}</small><b>${esc(p?.display_name||'Collector')}</b><span>${isReady?'● READY':'○ NOT READY'}</span></div></div>`}
+
+  function wireReadyButton(){
+    const btn=q('#mpBattleReadyBtnV255');if(!btn||btn.dataset.v2551ReadyWired==='1')return;
+    btn.dataset.v2551ReadyWired='1';
+    let localTap=0;
+    const fire=e=>{
+      if(e?.cancelable)e.preventDefault();e?.stopPropagation?.();
+      const now=Date.now();if(now-localTap<520)return;localTap=now;
+      const r=roomNow();setBattleReady(!myReady(r));
+    };
+    if(window.PointerEvent)btn.addEventListener('pointerup',fire,{passive:false});
+    else btn.addEventListener('touchend',fire,{passive:false});
+    btn.addEventListener('click',fire,{passive:false});
+  }
 
   async function ensureReadyProfiles(r){const ids=[r.host_id,r.guest_id].filter(Boolean);await fetchProfiles(ids);if(roomNow()?.id===r.id)applyReadyUI(roomNow())}
 
@@ -258,6 +297,11 @@
     latestRoom=r;updateLegacyReadyLabels(r);ensureReadyWatch(r);
     if(started(r)){markIntro(r.id);removeGate();q('#mpBodyV218')?.classList.remove('mpV255IntroLock');return}
     const body=q('#mpBodyV218');if(!body)return;
+    if(!matchFoundSeen(r.id)){
+      body.classList.add('mpV255IntroLock');
+      playMatchFound(r).catch(e=>{console.warn(e);markMatchFound(r.id);body.classList.remove('mpV255IntroLock')});
+      if(bothReady(r))return;
+    }
     if(bothReady(r)){
       removeGate();if(!introSeen(r.id)){body.classList.add('mpV255IntroLock');playBattleIntro(r).catch(e=>{console.warn(e);markIntro(r.id);body.classList.remove('mpV255IntroLock')})}else body.classList.remove('mpV255IntroLock');return;
     }
@@ -266,6 +310,7 @@
     const hp=profileCache.get(r.host_id)||{display_name:q(`.mpPlayerV218[data-mp-user-v229="${r.host_id}"] b`)?.textContent||'Collector'},gp=profileCache.get(r.guest_id)||{display_name:q(`.mpPlayerV218[data-mp-user-v229="${r.guest_id}"] b`)?.textContent||'Collector'};
     const mine=myReady(r),oppReady=r.host_id===me?.id?!!r.guest_ready:!!r.host_ready;
     gate.innerHTML=`<div class="mpReadyGateHeadV255"><small>RANKED MATCH FOUND</small><h3>Ready your battle banner</h3><p>Both collectors must lock in before either pack can open.</p></div><div class="mpReadyPlayersV255">${miniReadyCard(hp,r.host_id===me?.id?'YOU':'OPPONENT',!!r.host_ready)}<b>VS</b>${miniReadyCard(gp,r.guest_id===me?.id?'YOU':'OPPONENT',!!r.guest_ready)}</div><button type="button" class="mpBattleReadyBtnV255 ${mine?'on':''}" id="mpBattleReadyBtnV255">${mine?(oppReady?'BOTH READY':'READY ✓ • WAITING FOR OPPONENT'):'READY FOR BATTLE'}</button><small class="mpReadyHintV255">${mine?'Tap again to unready before your opponent locks in.':'Your current Profile photo, frame, badges and record will be shown.'}</small>`;
+    wireReadyButton();
     if(!profileCache.has(r.host_id)||!profileCache.has(r.guest_id))ensureReadyProfiles(r).catch(()=>{});
   }
 
@@ -295,6 +340,16 @@
     const setBtn=e.target?.closest?.('[data-battle-set-v221]');if(setBtn&&myReady(r)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation?.();if(e.type==='click')toastV255('Unready before changing your battle set.');return false}
   }
 
+  async function pollReadyRoom(force=false){
+    const r=roomNow();if(readyPollBusy||!client||!matchRoom(r)||r.status==='completed'||r.status==='cancelled')return;
+    if(!force&&started(r))return;
+    readyPollBusy=true;
+    try{
+      const {data,error}=await client.from('mp_battle_rooms').select('*').eq('id',r.id).single();
+      if(!error&&data){latestRoom=data;applyReadyUI(data)}
+    }catch(_){ }finally{readyPollBusy=false}
+  }
+
   function monitorBattle(){
     const r=legacyRoom();if(r?.id){if(latestRoom?.id!==r.id)latestRoom=r;ensureReadyWatch(roomNow());if(matchRoom(roomNow()))applyReadyUI(roomNow())}else{latestRoom=null;readyRoomId='';removeGate()}
   }
@@ -304,7 +359,7 @@
   document.addEventListener('touchstart',guardBattleStart,true);
   document.addEventListener('click',async e=>{
     if(e.target.closest('#mpBattlePackV220,#mpBattleRipTapV220,[data-battle-set-v221]'))guardBattleStart(e);
-    if(e.target.id==='mpBattleReadyBtnV255'){const r=roomNow();return setBattleReady(!myReady(r))}
+    const ready=e.target.closest?.('#mpBattleReadyBtnV255');if(ready&&ready.dataset.v2551ReadyWired!=='1'){const r=roomNow();return setBattleReady(!myReady(r))}
     if(e.target.closest('#mpChatToggleV255')){const box=q('#mpGlobalChatV255');box?.classList.toggle('open');if(box?.classList.contains('open')){unread=0;const u=q('#mpChatUnreadV255');if(u){u.hidden=true;u.textContent='0'}q('#mpChatMessagesV255')?.scrollTo?.({top:q('#mpChatMessagesV255').scrollHeight})}return}
     if(e.target.id==='mpChatSendV255')return sendChat();
     const mute=e.target.closest('[data-chat-mute-v255]');if(mute){toggleMute(mute.dataset.chatMuteV255);return}
@@ -326,7 +381,7 @@
     if(!mp()?.client)return;
     await ensureContext();mountBannerEditor({force:true});mountChat();
     if(me){await syncMyProfile({quiet:true});await refreshMyRank();startChat().catch(()=>{})}
-    monitorBattle();setInterval(monitorBattle,700);
+    monitorBattle();setInterval(monitorBattle,700);setInterval(()=>pollReadyRoom(false),850);
     client.auth.onAuthStateChange((_e,s)=>{me=s?.user||null;setTimeout(async()=>{mountChat();if(me){await syncMyProfile({quiet:true});await refreshMyRank();startChat().catch(()=>{})}else{try{if(chatChannel)client.removeChannel(chatChannel)}catch(_){}chatChannel=null}},100)});
   }
 
