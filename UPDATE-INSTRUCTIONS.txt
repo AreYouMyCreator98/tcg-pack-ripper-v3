@@ -1,13 +1,18 @@
-BROKEN BINDER CARD DELETE PATCH
-================================
-1. Extract this ZIP.
-2. Copy the CONTENTS into the root of tcg-pack-ripper-v3.
-3. Replace existing files when Windows asks.
-4. GitHub Desktop -> commit -> Push origin.
+V255 MULTIPLAYER ARENA
+======================
+The Supabase migration has ALREADY been applied to your live project.
 
-What changes:
-- Failed Binder artwork tiles now have TRY AGAIN and REMOVE.
-- Binder artwork status gets REMOVE BROKEN for all currently-known low-res artwork failures.
-- REMOVE permanently deletes the owned Binder entry/all copies from the save.
-- Master Set progress and collection value will drop accordingly.
-- Healthy cards and high-res-only failures are not targeted.
+1. Extract this ZIP.
+2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
+3. Choose Replace files in destination.
+4. In GitHub Desktop confirm paths such as public/runtime/multiplayer-v255.js and public/styles/multiplayer-v255.css stay inside their folders.
+5. Commit: V255 Multiplayer Arena
+6. Push origin.
+7. Wait for GitHub Actions to go green.
+8. Hard refresh once so the V255 service-worker cache replaces V254.1.
+
+Test with two signed-in accounts:
+- Quick Match -> both players must READY.
+- Confirm VS intro shows photo/frame/badges/record.
+- Profile -> Battle Banner changes appear on the next match.
+- Trade -> Global Chat updates live on both devices.

@@ -1,12 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const entry = join(root, 'src/main.js');
+const entry = resolve(root, 'src/main.js');
 const visited = new Set();
+
+function filesystemSpecifier(spec) {
+  return String(spec).split(/[?#]/, 1)[0];
+}
 
 async function walk(file) {
   if (visited.has(file)) return;
@@ -14,7 +18,7 @@ async function walk(file) {
   const source = await readFile(file, 'utf8');
   const imports = [...source.matchAll(/(?:import\s+(?:[^'\"]+?\s+from\s+)?|export\s+[^'\"]+?\s+from\s+)["'](\.[^"']+)["']/g)].map(match => match[1]);
   for (const spec of imports) {
-    const target = resolve(dirname(file), spec);
+    const target = resolve(dirname(file), filesystemSpecifier(spec));
     await access(target);
     await walk(target);
   }

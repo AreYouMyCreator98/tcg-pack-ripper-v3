@@ -25,6 +25,6 @@ test('Reveal All starts at the currently displayed card and never calls payment'
 
 test('card-specific reveal identity is tied to awarded card id and index', () => {
   assert.match(reveal, /const key = `\$\{card\.id \|\| ''\}\|\$\{detail\.index \?\? ''\}`/);
-  assert.match(reveal, /stack\.dataset\.v253CardKey = key/);
-  assert.match(reveal, /img\.dataset\.v253CardKey = key/);
+  assert.match(reveal, /stack\.dataset\.v254CardKey = key/);
+  assert.match(reveal, /img\.dataset\.v254CardKey = key/);
 });

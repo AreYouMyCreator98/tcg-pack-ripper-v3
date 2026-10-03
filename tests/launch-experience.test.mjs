@@ -7,9 +7,9 @@ const launch = fs.readFileSync('src/app/launch-screen.js','utf8');
 const sw = fs.readFileSync('public/sw.js','utf8');
 const html = fs.readFileSync('index.html','utf8');
 
-test('V254.1 launch screen exists before module boot', () => {
+test('branded launch screen exists before module boot', () => {
   assert.match(html, /id="tcgLaunch"/);
-  assert.ok(html.indexOf('id="tcgLaunch"') < html.indexOf('src="./src/main.js?v=2541"'));
+  assert.ok(html.indexOf('id="tcgLaunch"') < html.indexOf('src=".\/src\/main.js?v=2550"'));
 });
 
 test('boot suppresses achievement visuals until ready', () => {
@@ -22,8 +22,9 @@ test('first frame is prewarmed before launch completes', () => {
   assert.ok(main.indexOf('prewarmFirstFrame') < main.indexOf('finishLaunch'));
 });
 
-test('service worker cache version and launch module are current', () => {
-  assert.match(sw, /0\.254\.1/);
+test('service worker cache and launch module are current', () => {
+  assert.match(sw, /0\.255\.0/);
   assert.match(sw, /src\/app\/launch-screen\.js/);
   assert.match(sw, /styles\/pack-v254\.css/);
+  assert.match(sw, /styles\/multiplayer-v255\.css/);
 });

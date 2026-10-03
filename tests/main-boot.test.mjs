@@ -20,11 +20,10 @@ test('rank-frame image renderer replaces the old artwork-runtime dependency', ()
   assert.match(main, /installRankFrameRenderer\(\)/);
 });
 
-
-test('V253 pack engine is additive and cannot gate legacy startup', () => {
-  const critical = main.indexOf("await loadCriticalRuntime()");
-  const pack = main.indexOf("await loadPackRuntime()");
-  const ready = main.indexOf("tcg:app-ready");
+test('modular pack engine is additive and cannot gate legacy startup', () => {
+  const critical = main.indexOf('await loadCriticalRuntime()');
+  const pack = main.indexOf('await loadPackRuntime()');
+  const ready = main.indexOf('tcg:app-ready');
   assert.ok(critical >= 0 && pack > critical && ready > pack);
-  assert.match(main, /V253 pack engine unavailable; using legacy pack flow/);
+  assert.match(main, /Modular pack engine unavailable; using legacy pack flow/);
 });
