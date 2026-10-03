@@ -1,11 +1,10 @@
-V254.0 UPDATE
+V254.1 UPDATE
 =============
 1. Extract this ZIP.
 2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
-3. Choose Replace files in destination when Windows asks.
-4. In GitHub Desktop, confirm the changed files stay in their folders.
-5. Commit message: V254 insane reveal overhaul
-6. Push origin.
-7. Wait for GitHub Actions to go green, then refresh the game hard.
+3. Choose Replace files in destination.
+4. GitHub Desktop commit: V254.1 launch experience
+5. Push origin and wait for Actions to go green.
+6. Because this update changes the service worker, after the first updated load refresh once more if your browser had the old site open.
 
-This update only changes reveal presentation and polish. Pull rates, economy, saves, routing, and pack logic stay the same.
+No save, pull-rate, economy, ownership or reward changes.

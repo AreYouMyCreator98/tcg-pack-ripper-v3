@@ -1,11 +1,11 @@
-const VERSION = 'tcg-pack-ripper-0.253.2-1';
+const VERSION = 'tcg-pack-ripper-0.254.1-1';
 const STATIC = `${VERSION}-static`;
 const MEDIA = `${VERSION}-media`;
 const CORE = [
-  './','./index.html','./src/main.js','./src/ui.js','./src/app/runtime-loader.js','./src/app/diagnostics.js',
+  './','./index.html','./src/main.js','./src/ui.js','./src/app/runtime-loader.js','./src/app/diagnostics.js','./src/app/launch-screen.js',
   './src/config/app-config.js','./src/config/runtime-manifest.js','./src/utils/async.js','./src/app/navigation-preload.js','./src/systems/binder.js','./src/systems/packs.js','./src/systems/rank-frame-renderer.js','./src/packs/index.js','./src/packs/pack-engine.js','./src/packs/pack-generator.js','./src/packs/pack-results.js','./src/packs/pack-session.js','./src/packs/pack-history.js','./src/packs/pack-costs.js','./src/packs/pack-hud.js','./src/packs/pack-rates.js','./src/animations/packs/reveal-profile.js','./src/animations/packs/reveal-controller.js','./src/animations/packs/ten-pack-controller.js','./src/animations/packs/pack-summary.js','./src/screens/binder/index.js','./src/screens/binder/binder-bridge.js','./src/screens/binder/binder-model.js','./src/screens/binder/binder-renderer.js','./src/screens/binder/binder-inspector.js','./src/screens/binder/binder-status.js','./src/artwork/index.js','./src/artwork/card-identity.js','./src/artwork/artwork-db.js','./src/artwork/artwork-queue.js','./src/artwork/artwork-resolver.js','./src/artwork/artwork-cache.js',
-  './styles/core.css','./styles/collection.css','./styles/packs.css','./styles/pack-v253.css','./styles/multiplayer.css','./styles/binder.css','./styles/mobile-performance.css',
-  './runtime/core.js','./runtime/progression.js','./runtime/special-collection.js','./runtime/packs.js','./runtime/pack-bridge.js','./runtime/binder-bridge.js',
+  './styles/core.css','./styles/collection.css','./styles/packs.css','./styles/pack-v253.css','./styles/pack-v2533.css','./styles/pack-v254.css','./styles/multiplayer.css','./styles/binder.css','./styles/mobile-performance.css',
+  './runtime/core.js','./runtime/progression.js','./runtime/special-collection.js','./runtime/packs.js','./runtime/pack-bridge.js','./runtime/binder-bridge.js','./runtime/multiplayer.js','./runtime/rank-frames.js','./runtime/ranked.js',
   './ui/chrome.html','./ui/screens/rip.html','./ui/screens/binder.html','./ui/screens/bulk.html','./ui/screens/trade.html','./ui/screens/profile.html','./ui/overlays.html'
 ];
 
@@ -27,7 +27,7 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== location.origin) return; // never cache Supabase/API traffic
+  if (url.origin !== location.origin) return;
 
   if (req.mode === 'navigate') {
     event.respondWith(fetch(req).catch(() => caches.match('./index.html')));

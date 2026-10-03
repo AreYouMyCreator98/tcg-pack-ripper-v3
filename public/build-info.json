@@ -1,9 +1,5 @@
 {
-  "version": "0.253.2",
-  "buildId": "v2532-mobile-polish-1",
-  "saveSchemaVersion": 1,
-  "assetSchemaVersion": 1,
-  "compatibilityRuntime": "V245-compatible",
-  "binderArchitecture": "V252 modular renderer + local-first artwork cache",
-  "packArchitecture": "V253 modular session/reveal engine + legacy probability bridge"
+  "version": "0.254.1",
+  "buildId": "v2541-boot-experience-1",
+  "saveSchemaVersion": 1
 }

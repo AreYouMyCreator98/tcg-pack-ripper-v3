@@ -1,10 +1,10 @@
 export const APP_CONFIG = Object.freeze({
   name: 'TCG Pack Ripper+',
-  version: '0.254.0',
-  buildId: 'v2540-insane-reveal-overhaul-1',
+  version: '0.254.1',
+  buildId: 'v2541-boot-experience-1',
   saveSchemaVersion: 1,
   assetSchemaVersion: 1,
-  cacheVersion: 'tcg-v2540-1',
+  cacheVersion: 'tcg-v2541-1',
   supabase: Object.freeze({
     projectRef: 'ddeuwrnfmdgvizkrjhii',
     url: 'https://ddeuwrnfmdgvizkrjhii.supabase.co',
@@ -20,6 +20,7 @@ export const APP_CONFIG = Object.freeze({
     modularPackV253: true,
     revealEngineV253: true,
     revealFxV254: true,
+    launchExperienceV2541: true,
     nativeShell: false,
     experimentalRenderer: false
   })
