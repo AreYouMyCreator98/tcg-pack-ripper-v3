@@ -1,11 +1,14 @@
 export function revealTier(card = {}) {
   const rarity = String(card.rarity || '').toLowerCase().trim();
-  if (/hyper|secret|rainbow|gold/.test(rarity)) return 5;
-  if (/special illustration|shiny ultra/.test(rarity)) return 4;
-  if (/illustration|ultra rare|radiant|amazing|trainer gallery|galarian gallery|rare holo vmax|rare holo vstar/.test(rarity)) return 3;
-  if (/double rare|ace spec|rare holo v|\bvmax\b|\bvstar\b|\bex\b|\bgx\b/.test(rarity)) return 2;
-  if (/holo|reverse|rare/.test(rarity)) return 1;
-  return 0;
+  const name = String(card.name || '').toLowerCase().trim();
+  const finish = String(card.finish || '').toLowerCase().trim();
+  const text = `${rarity} ${name} ${finish}`;
+  if (card.secret || /hyper|secret|rainbow|gold rare/.test(text)) return 5;
+  if (/special illustration|shiny ultra/.test(text)) return 4;
+  if (/illustration|ultra rare|radiant|amazing|trainer gallery|galarian gallery|rare holo vmax|holo rare vmax|rare holo vstar|holo rare vstar|\bvmax\b|\bvstar\b/.test(text)) return 3;
+  if (/double rare|ace spec|rare holo v|holo rare v|rare holo gx|holo rare gx|\bex\b|\bgx\b|(?:^|\s)v(?:$|\s)/.test(text)) return 2;
+  if (/holo|reverse|rare/.test(text)) return 1;
+  return Math.max(0, Math.min(5, Number(card.tier || 0)));
 }
 
 export function revealProfile(card = {}) {

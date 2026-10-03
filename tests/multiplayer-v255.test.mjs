@@ -47,7 +47,7 @@ test('v255 assets are linked and service-worker precached', () => {
   assert.match(index, /multiplayer-v255\.css/);
   assert.match(sw, /multiplayer-v255\.js/);
   assert.match(sw, /multiplayer-v255\.css/);
-  assert.match(sw, /tcg-pack-ripper-0\.255\.2/);
+  assert.match(sw, /tcg-pack-ripper-0\.255\.3/);
   assert.match(js, /wireReadyButton/);
   assert.match(js, /pollReadyRoom/);
   assert.match(js, /MATCH FOUND/);

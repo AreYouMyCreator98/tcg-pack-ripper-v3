@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.255.3
+- Fixed iPhone/Messenger ranked set selection with touch/pointer-safe direct selection that no longer waits on a full network-backed battle re-render.
+- Added direct battle pack touch fallback and safer swipe thresholds for mobile browsers.
+- Battle pack generation now restores global pack state in `finally` and retries one clean time after a generator failure instead of leaving the pack engine corrupted until reload.
+- MATCH FOUND now renders immediately from cached/local identity before any profile network fetch, then hydrates the full profiles behind the animation.
+- Fixed VMAX/VSTAR rarity classification for API strings such as `Holo Rare VMAX`; name-based fallbacks now protect VMAX, VSTAR, V, GX and ex scoring.
+- Ranked top-hit selection is now index-safe and uses the corrected battle tier.
+- The global reveal tier classifier received the same VMAX/VSTAR compatibility fix.
+- No pull-rate, save-schema, economy or card-ownership changes.
+
 ## 0.255.2
 - Fixed V255.1 startup stalls at the 47% Loading Collection phase.
 - Service worker registration/update now begins before critical runtime loading, breaking stale-cache startup deadlocks.

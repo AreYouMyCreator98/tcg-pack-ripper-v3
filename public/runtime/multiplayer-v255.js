@@ -19,7 +19,7 @@
   const profileCache=new Map();
   const messageIds=new Set();
   let client=null,me=null,chatChannel=null,readyChannel=null,readyRoomId='',latestRoom=null,introPlaying=false,matchFoundPlaying=false,unread=0;
-  let installTimer=null,readyPollBusy=false,lastReadyTapAt=0;
+  let installTimer=null,readyPollBusy=false,lastReadyTapAt=0,lastSetCommitAt=0,setPointerStart=null,lastBattleRipTapAt=0;
 
   function mp(){return window.tcgMultiplayerV218||null}
   function toastV255(msg){try{window.toast?.(msg)}catch(_){console.log(msg)}}
@@ -242,15 +242,17 @@
     if(matchFoundPlaying||matchFoundSeen(r?.id)||!matchRoom(r)||started(r))return;
     matchFoundPlaying=true;
     try{
-      const profiles=await fetchProfiles([r.host_id,r.guest_id],{force:true});
       const myId=r.host_id===me?.id?r.host_id:r.guest_id,oppId=myId===r.host_id?r.guest_id:r.host_id;
-      const mine=profiles[myId]||localProfile(),opp=profiles[oppId]||{display_name:'Collector'};
+      const legacyName=uid=>q(`.mpPlayerV218[data-mp-user-v229="${uid}"] b`)?.textContent||'Collector';
+      let mine=profileCache.get(myId)||localProfile()||{display_name:legacyName(myId)},opp=profileCache.get(oppId)||{display_name:legacyName(oppId)};
       q('#mpMatchFoundV2551')?.remove();
       const o=document.createElement('div');o.id='mpMatchFoundV2551';o.className='mpMatchFoundV2551';
-      o.innerHTML=`<div class="mpMatchFoundBackdropV2551"></div><div class="mpMatchFoundPulseV2551"></div><div class="mpMatchFoundCoreV2551"><small>RANKED QUEUE</small><h2>MATCH FOUND</h2><div class="mpMatchFoundPlayersV2551"><div>${avatarMarkup(mine,'found')}<b>${esc(mine.display_name||'Collector')}</b></div><span><i></i>VS<i></i></span><div>${avatarMarkup(opp,'found')}<b>${esc(opp.display_name||'Collector')}</b></div></div><strong>READY CHECK</strong></div>`;
-      document.body.appendChild(o);requestAnimationFrame(()=>o.classList.add('show'));
+      const renderPlayers=()=>{const host=q('.mpMatchFoundPlayersV2551',o);if(host)host.innerHTML=`<div>${avatarMarkup(mine,'found')}<b>${esc(mine.display_name||'Collector')}</b></div><span><i></i>VS<i></i></span><div>${avatarMarkup(opp,'found')}<b>${esc(opp.display_name||'Collector')}</b></div>`};
+      o.innerHTML=`<div class="mpMatchFoundBackdropV2551"></div><div class="mpMatchFoundPulseV2551"></div><div class="mpMatchFoundCoreV2551"><small>RANKED QUEUE</small><h2>MATCH FOUND</h2><div class="mpMatchFoundPlayersV2551"></div><strong>READY CHECK</strong></div>`;
+      renderPlayers();document.body.appendChild(o);requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('show')));markMatchFound(r.id);
       try{navigator.vibrate?.([18,25,34])}catch(_){}
-      await sleep(1200);o.classList.add('lock');await sleep(520);o.classList.add('leave');await sleep(300);o.remove();markMatchFound(r.id);
+      fetchProfiles([r.host_id,r.guest_id],{force:true}).then(profiles=>{mine=profiles[myId]||mine;opp=profiles[oppId]||opp;renderPlayers()}).catch(()=>{});
+      await sleep(1450);o.classList.add('lock');await sleep(520);o.classList.add('leave');await sleep(320);o.remove();
     }finally{matchFoundPlaying=false;setTimeout(()=>applyReadyUI(roomNow()||r),0)}
   }
 
@@ -333,6 +335,27 @@
     readyChannel=client.channel('battle-ready-v255-'+r.id).on('postgres_changes',{event:'UPDATE',schema:'public',table:'mp_battle_rooms',filter:'id=eq.'+r.id},p=>{latestRoom=p.new;applyReadyUI(p.new);if(p.new.status==='completed')setTimeout(refreshMyRank,250)}).subscribe();
   }
 
+  function battleLocalCompat(id){try{return JSON.parse(localStorage.getItem(`tcgBattleRoomV220:${id}`)||'null')||{}}catch(_){return {}}}
+  function saveBattleLocalCompat(id,x){try{localStorage.setItem(`tcgBattleRoomV220:${id}`,JSON.stringify(x))}catch(_){}}
+  function setByIdV2553(id){try{return (typeof SETS!=='undefined'?SETS:[]).find(s=>s.id===id)||null}catch(_){return null}}
+  function setPackArtV2553(s){try{return (typeof OFFICIAL_PACK_ART!=='undefined'&&OFFICIAL_PACK_ART?.[s.id]?.[0])||(typeof logo==='function'?logo(s):'')}catch(_){return ''}}
+  function commitBattleSetV2553(btn,{announce=false}={}){
+    const r=roomNow();if(!btn||!r||r.status==='completed')return false;
+    if(myReady(r)){if(announce)toastV255('Unready before changing your battle set.');return false}
+    const local=battleLocalCompat(r.id);if(local.generated){if(announce)toastV255('Battle pack already locked in.');return false}
+    const setId=String(btn.dataset.battleSetV221||''),chosen=setByIdV2553(setId);if(!chosen)return false;
+    try{if(typeof setUnlocked==='function'&&!setUnlocked(chosen)){if(announce)toastV255('That set is locked on this account.');return false}}catch(_){}
+    local.chosenSetId=chosen.id;local.chosenSetName=chosen.name;saveBattleLocalCompat(r.id,local);lastSetCommitAt=Date.now();
+    qa('[data-battle-set-v221]').forEach(x=>x.classList.toggle('active',x.dataset.battleSetV221===chosen.id));
+    const head=q('.mpBattleSetHeadV221 b');if(head)head.textContent=chosen.name;const lock=q('.mpBattleSetLockV221 b');if(lock)lock.textContent=chosen.name;
+    const sub=q('#mpSubV218');if(sub)sub.textContent=`${chosen.name} • 1 pack each`;
+    const img=q('#mpBattlePackV220 img'),art=setPackArtV2553(chosen);if(img&&art){img.src=art;img.alt=`${chosen.name} Battle pack`;try{const warm=new Image();warm.decoding='async';warm.src=art}catch(_){}}
+    try{navigator.vibrate?.(7)}catch(_){};return true
+  }
+  function setGestureStartV2553(e){const btn=e.target?.closest?.('[data-battle-set-v221]');if(!btn)return;const p=e.touches?.[0]||e;setPointerStart={btn,x:Number(p.clientX||0),y:Number(p.clientY||0),at:Date.now()}}
+  function setGestureEndV2553(e){const start=setPointerStart;setPointerStart=null;if(!start?.btn?.isConnected)return;const p=e.changedTouches?.[0]||e,dx=Math.abs(Number(p.clientX||0)-start.x),dy=Math.abs(Number(p.clientY||0)-start.y);if(dx>16||dy>16||Date.now()-start.at>700)return;if(e.cancelable)e.preventDefault();e.stopPropagation?.();e.stopImmediatePropagation?.();commitBattleSetV2553(start.btn,{announce:true})}
+  function mobileRipFallbackV2553(e){const btn=e.target?.closest?.('#mpBattleRipTapV220');if(!btn||e.type==='click')return;const r=roomNow();if(!matchRoom(r)||!bothReady(r)||!introSeen(r.id)||started(r))return;const now=Date.now();if(now-lastBattleRipTapAt<650)return;lastBattleRipTapAt=now;if(e.cancelable)e.preventDefault();e.stopPropagation?.();setTimeout(()=>btn.click(),0)}
+
   function guardBattleStart(e){
     const r=roomNow();if(!matchRoom(r)||started(r))return;
     const pack=e.target?.closest?.('#mpBattlePackV220,#mpBattleRipTapV220');
@@ -355,10 +378,13 @@
   }
 
   /* ---------------- Event wiring ---------------- */
-  document.addEventListener('pointerdown',guardBattleStart,true);
-  document.addEventListener('touchstart',guardBattleStart,true);
+  document.addEventListener('pointerdown',e=>{guardBattleStart(e);setGestureStartV2553(e)},true);
+  document.addEventListener('touchstart',e=>{guardBattleStart(e);setGestureStartV2553(e)},true);
+  document.addEventListener('pointerup',e=>{if(e.target?.closest?.('[data-battle-set-v221]'))setGestureEndV2553(e);mobileRipFallbackV2553(e)},true);
+  document.addEventListener('touchend',e=>{if(setPointerStart)setGestureEndV2553(e);mobileRipFallbackV2553(e)},true);
   document.addEventListener('click',async e=>{
-    if(e.target.closest('#mpBattlePackV220,#mpBattleRipTapV220,[data-battle-set-v221]'))guardBattleStart(e);
+    const setBtn=e.target.closest?.('[data-battle-set-v221]');if(setBtn){guardBattleStart(e);e.preventDefault();e.stopPropagation();e.stopImmediatePropagation?.();if(Date.now()-lastSetCommitAt>550)commitBattleSetV2553(setBtn,{announce:true});return}
+    if(e.target.closest('#mpBattlePackV220,#mpBattleRipTapV220'))guardBattleStart(e);
     const ready=e.target.closest?.('#mpBattleReadyBtnV255');if(ready&&ready.dataset.v2551ReadyWired!=='1'){const r=roomNow();return setBattleReady(!myReady(r))}
     if(e.target.closest('#mpChatToggleV255')){const box=q('#mpGlobalChatV255');box?.classList.toggle('open');if(box?.classList.contains('open')){unread=0;const u=q('#mpChatUnreadV255');if(u){u.hidden=true;u.textContent='0'}q('#mpChatMessagesV255')?.scrollTo?.({top:q('#mpChatMessagesV255').scrollHeight})}return}
     if(e.target.id==='mpChatSendV255')return sendChat();

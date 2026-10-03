@@ -34,3 +34,12 @@
 @keyframes mpV2551FoundZoom{0%{transform:scale(1.18);filter:blur(8px)}100%{transform:scale(1);filter:blur(0)}}@keyframes mpV2551FoundPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}30%{opacity:.7}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}@keyframes mpV2551FoundCore{0%{opacity:0;transform:scale(.78) translateY(12px)}100%{opacity:1;transform:scale(1) translateY(0)}}
 @media(max-width:620px){.mpMatchFoundPlayersV2551{grid-template-columns:1fr 48px 1fr}.mpBannerAvatarV255.found{width:74px;height:74px}.mpMatchFoundCoreV2551>h2{margin-bottom:18px}.mpMatchFoundPlayersV2551>div>b{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.mpMatchFoundV2551 *{animation:none!important}.mpMatchFoundV2551.show .mpMatchFoundCoreV2551{opacity:1;transform:none}}
+
+
+/* V255.3 — iOS battle controls + guaranteed matchmaking presentation */
+.mpBattleSetRailV221{touch-action:pan-x!important;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.mpBattleSetBtnV221{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.mpBattleSetBtnV221:active{transform:scale(.985)}
+.mpBattleFallbackV220{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent}
+.mpMatchFoundV2551{visibility:visible!important}
+.mpMatchFoundV2551.show{opacity:1!important}
