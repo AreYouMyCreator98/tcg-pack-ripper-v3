@@ -1,10 +1,13 @@
-V254.1 UPDATE
-=============
+BROKEN BINDER CARD DELETE PATCH
+================================
 1. Extract this ZIP.
-2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
-3. Choose Replace files in destination.
-4. GitHub Desktop commit: V254.1 launch experience
-5. Push origin and wait for Actions to go green.
-6. Because this update changes the service worker, after the first updated load refresh once more if your browser had the old site open.
+2. Copy the CONTENTS into the root of tcg-pack-ripper-v3.
+3. Replace existing files when Windows asks.
+4. GitHub Desktop -> commit -> Push origin.
 
-No save, pull-rate, economy, ownership or reward changes.
+What changes:
+- Failed Binder artwork tiles now have TRY AGAIN and REMOVE.
+- Binder artwork status gets REMOVE BROKEN for all currently-known low-res artwork failures.
+- REMOVE permanently deletes the owned Binder entry/all copies from the save.
+- Master Set progress and collection value will drop accordingly.
+- Healthy cards and high-res-only failures are not targeted.
