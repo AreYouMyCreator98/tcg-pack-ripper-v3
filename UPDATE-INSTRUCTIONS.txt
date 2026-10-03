@@ -1,11 +1,11 @@
-V253.3 UPDATE
+V254.0 UPDATE
 =============
 1. Extract this ZIP.
 2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
 3. Choose Replace files in destination when Windows asks.
-4. In GitHub Desktop, confirm paths remain nested (for example public/styles/pack-v2533.css).
-5. Commit: V253.3 final pack alignment
+4. In GitHub Desktop, confirm the changed files stay in their folders.
+5. Commit message: V254 insane reveal overhaul
 6. Push origin.
-7. Wait for GitHub Actions to go green, then refresh the game.
+7. Wait for GitHub Actions to go green, then refresh the game hard.
 
-This patch only moves the collector pill slightly upward and fixes clipped summary-card fans.
+This update only changes reveal presentation and polish. Pull rates, economy, saves, routing, and pack logic stay the same.
