@@ -1,0 +1,11 @@
+V253.3 UPDATE
+=============
+1. Extract this ZIP.
+2. Copy the CONTENTS into the root of your local tcg-pack-ripper-v3 repo.
+3. Choose Replace files in destination when Windows asks.
+4. In GitHub Desktop, confirm paths remain nested (for example public/styles/pack-v2533.css).
+5. Commit: V253.3 final pack alignment
+6. Push origin.
+7. Wait for GitHub Actions to go green, then refresh the game.
+
+This patch only moves the collector pill slightly upward and fixes clipped summary-card fans.

@@ -1,10 +1,10 @@
 export const APP_CONFIG = Object.freeze({
   name: 'TCG Pack Ripper+',
-  version: '0.253.2',
-  buildId: 'v2532-mobile-polish-1',
+  version: '0.253.3',
+  buildId: 'v2533-final-pack-alignment-1',
   saveSchemaVersion: 1,
   assetSchemaVersion: 1,
-  cacheVersion: 'tcg-v2532-1',
+  cacheVersion: 'tcg-v2533-1',
   supabase: Object.freeze({
     projectRef: 'ddeuwrnfmdgvizkrjhii',
     url: 'https://ddeuwrnfmdgvizkrjhii.supabase.co',

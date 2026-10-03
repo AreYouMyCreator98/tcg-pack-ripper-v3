@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.253.3
+- Lifted the FAST / SESSION / SIR+ / GOD collector pill slightly above the 1 PACK / 10 PACK selector.
+- Added top clearance to completed 1-pack and 10-pack summaries so the entire opening-card fan is visible instead of being clipped behind the upper shelf/stage boundary.
+- No pack logic, pull rates, rewards, routing, economy, or save-schema changes.
+
 ## 0.253.2
 - Rebuilt the FAST / SESSION / SIR+ / GOD controls as one opaque-glass collector pill above the 1 PACK / 10 PACK selector.
 - Collector pill now hides automatically during pack extraction, live card reveals and completed-pack summary so it never overlays cards.
